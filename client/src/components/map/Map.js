@@ -1,33 +1,48 @@
 import React from "react";
-import GoogleMapReact from 'google-map-react';
+import {
+    GoogleMap,
+    useLoadScript,
+    Marker,
+    InfoWindow,
+} from "@react-google-maps/api"
+import mapStyles from "./MapStyles";
 
-const AnyReactComponent = ({ text }) => <div style={{ height: '50px', width: '50px', backgroundColor: 'red' }}>{text}</div>;
+const libraries = [
+    "places",
+]
+
+const mapContainerStyle = {
+    width: "100vw",
+    height: "100vh"
+}
+const center = {
+    lat: 54.56,
+    lng: 21.19
+}
+const options = {
+    styles: mapStyles,
+    disableDefaultUI: true,
+    streetViewControl: true, 
+}
+
 
 function Map(){
-    const defaultProps = {
-      center: {
-        lat: 54.56835602,
-        lng: 21.19502627
-      },
-      zoom: 11
-    };
-  
+
+    const { isLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: "AIzaSyAw6mcd0lwML_h3PPeH0n_nt6bu_TNnfSE",
+        libraries: libraries
+    })
+
+    if (loadError) return "Error loading maps"
+    if (!isLoaded) return "Loading maps"
+
     return (
-      // Important! Always set the container height explicitly
-      <div style={{ height: '100vh', width: '100%' }}>
-        <GoogleMapReact
-          yesIWantToUseGoogleMapApiInternals
-          bootstrapURLKeys={{ key: "AIzaSyAw6mcd0lwML_h3PPeH0n_nt6bu_TNnfSE" }}
-          defaultCenter={defaultProps.center}
-          defaultZoom={defaultProps.zoom}
-        >
-          <AnyReactComponent
-            lat={59.955413}
-            lng={30.337844}
-            text=""
-          />
-        </GoogleMapReact>
-      </div>
+        <GoogleMap 
+            mapContainerStyle={mapContainerStyle} 
+            zoom={8}
+            center={center}
+            options={options}
+        ></GoogleMap>
     );
 }
 

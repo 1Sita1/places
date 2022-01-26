@@ -1,11 +1,10 @@
 import './App.css';
-import Header from './components/header/Header';
 import Map from './components/map/Map';
 
 function App() {
   return (
     <div className="App">
-      {/* <Header /> */}
+      <h1 id='header'>MP</h1>
       <Map />
     </div>
   );
