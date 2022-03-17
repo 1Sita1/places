@@ -1,0 +1,66 @@
+.infoBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 90vh;
+  margin-top: 5vh;
+  margin-left: 10px;
+  border-radius: 5px;
+  background-color: #fff;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  overflow-y: scroll;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.infoBar::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+}
+.infoBar::-webkit-scrollbar {
+  width: 8px;
+  background-color: #f5f5f5;
+}
+.infoBar::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #afafaf4f;
+}
+
+.imgWrap {
+  width: 100%;
+}
+.InfoBarImg {
+  width: 100%;
+  height: auto;
+  max-height: 600px;
+  border-bottom: 2px solid #6d6d6d;
+}
+
+.infoBarInfo {
+  width: 100%;
+  text-align: left;
+  margin-top: 5px;
+  padding: 10px;
+}
+
+.infoBarClose {
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  cursor: pointer;
+}
+.infoBarClose:after {
+  color: #fff;
+  font-size: 32px;
+  display: inline-block;
+  content: "\00d7"; /* This will render the 'X' */
+}
+
+@media (max-width: 500px) {
+  .infoBar {
+    width: 100vw;
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+}

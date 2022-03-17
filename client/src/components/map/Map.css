@@ -1,0 +1,24 @@
+.infoWindow {
+  max-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.infoWindow > h1 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.infoWindow > img {
+  max-width: 200px;
+  height: auto;
+  margin-bottom: 15px;
+}
+
+.infoWindow > p {
+  max-width: 90%;
+  text-align: center;
+  margin: 0;
+  font-size: 14px;
+}

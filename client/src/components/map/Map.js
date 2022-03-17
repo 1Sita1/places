@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
     GoogleMap,
     useLoadScript,
@@ -6,6 +6,9 @@ import {
     InfoWindow,
 } from "@react-google-maps/api"
 import mapStyles from "./MapStyles";
+import getMarkers from "./getMarkers";
+import "./Map.css"
+import InfoBar from "../InfoBar/InfoBar";
 
 const libraries = [
     "places",
@@ -24,6 +27,13 @@ const options = {
     disableDefaultUI: true,
     streetViewControl: true, 
 }
+const defaultZoom = 4
+
+const rarityColors = {
+    "gold": "rgb(177, 192, 47)",
+    "silver": "rgb(179, 185, 163)",
+    "bronze": "rgb(184, 120, 36)"
+}
 
 
 function Map(){
@@ -33,16 +43,85 @@ function Map(){
         libraries: libraries
     })
 
+    const [markers, setMarkers] = useState([])
+    const [selected, setSelected] = useState(null)
+    const [zoom, setZoom] = useState(defaultZoom)
+
+    const onMapClick = useCallback(event => {
+        setSelected(null)
+    }, [])
+
+    const onZoomChanged = useCallback(function() {
+        setZoom(this.zoom)
+    }, [])
+
+    useEffect(() => {
+        getMarkers()
+            .then(result => setMarkers(result))
+    })
+
+    const mapRef = useRef()
+    const onMapLoad = useCallback(map => {
+        mapRef.current = map
+    }, [])
+
     if (loadError) return "Error loading maps"
     if (!isLoaded) return "Loading maps"
 
     return (
+        <>
+        
         <GoogleMap 
             mapContainerStyle={mapContainerStyle} 
-            zoom={8}
+            zoom={defaultZoom}
             center={center}
             options={options}
-        ></GoogleMap>
+            onClick={onMapClick}
+            onZoomChanged={onZoomChanged}
+            onLoad={onMapLoad}
+        >
+            {markers.map(marker => <Marker 
+                key={marker.time} 
+                position={{lat: marker.lat, lng: marker.lng}}
+                icon={{
+                    url: "/" + marker.rarity + "Marker.svg",
+                    scaledSize: new window.google.maps.Size(30, 30),
+                    origin: new window.google.maps.Point(0, 0),
+                    anchor: new window.google.maps.Point(15, 20),
+                }}
+                onClick={() => setSelected(marker)}
+            />)}
+
+            {/*<InfoWindow 
+                position={{lat: selected.lat, lng: selected.lng}}
+                onCloseClick={() => setSelected(null)}
+            >
+                <div className="infoWindow">
+                    <h1>Some fancy place here</h1>
+                    <img src="/example.jpg"></img>
+                    <p>In this place in the year of ... bla bla bla bla bla</p>
+                    <h5 style={{color: rarityColors[selected.rarity]}}>{selected.rarity}</h5>
+                </div>
+            </InfoWindow>*/}
+        </GoogleMap>
+
+        {selected !== null ? (
+            <InfoBar
+                header={selected.rarity}
+                img={selected.img}
+                body=""
+                onCloseClick={() => setSelected(null)}
+            >
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In venenatis lorem vel faucibus sagittis. Aenean condimentum vel velit ac porta. Maecenas malesuada erat nec tellus mollis volutpat. Praesent convallis a nibh in finibus. Maecenas ex nibh, rutrum vitae sagittis at, feugiat eget sem. Vivamus nec maximus eros. Mauris vel molestie nisl. Integer vitae odio viverra, sollicitudin tortor id, semper eros. Aenean pulvinar sit amet ex a faucibus. Nulla aliquet vestibulum enim. Curabitur vel dignissim nisl, in convallis nulla.
+                <br></br>
+                <br></br>
+                Etiam vestibulum ullamcorper nisl. Nam sit amet nisi rutrum, pulvinar ipsum ut, sagittis eros. Donec hendrerit libero nec sollicitudin dictum. Praesent tellus risus, ultrices vitae euismod et, dictum non quam. Donec pretium arcu ut magna rhoncus elementum. Aliquam eget eros sed leo pellentesque rhoncus vel eget est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec laoreet cursus aliquet. Curabitur non tellus sed velit maximus tincidunt. Phasellus ac dolor vulputate, tincidunt elit id, lacinia augue.
+                <br></br>
+                <br></br>
+                Praesent pulvinar, metus at maximus condimentum, lacus massa facilisis mauris, non laoreet risus velit et quam. Morbi aliquam euismod urna ut pharetra. Quisque ac dui maximus, lacinia libero et, imperdiet nibh. Donec efficitur orci neque, ut sagittis velit sagittis sed. Morbi ut pharetra dui, eu pellentesque sapien. Fusce a turpis ac sem dictum porta. Vestibulum consequat justo ut odio hendrerit, id mattis erat sagittis. Nam quam purus, tristique nec tincidunt a, aliquam mattis odio. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas viverra tellus vel justo sagittis, ut condimentum nunc efficitur. Suspendisse vitae nisl neque. Praesent commodo fermentum luctus. Pellentesque a neque quis purus lacinia ullamcorper non ut mi. Nunc purus massa, sodales non aliquet sed, tempor interdum lacus. Duis quis ante vehicula, sodales lorem sit amet, ullamcorper tortor.    
+            </InfoBar>) : null}
+        
+        </>
     );
 }
 
