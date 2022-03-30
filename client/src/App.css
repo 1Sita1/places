@@ -1,16 +1,9 @@
 .App {
   text-align: center;
+  max-height: 100vh;
 }
 
 .navbar-brand {
   border-bottom: 3px solid rgb(83, 22, 141);
 }
 
-#header {
-  border-bottom: 3px solid rgb(206, 64, 211);
-  position: absolute;
-  left: 40px;
-  top: 10px;
-  z-index: 2;
-  opacity: 0.8;
-}

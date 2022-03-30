@@ -91,18 +91,6 @@ function Map(){
                 }}
                 onClick={() => setSelected(marker)}
             />)}
-
-            {/*<InfoWindow 
-                position={{lat: selected.lat, lng: selected.lng}}
-                onCloseClick={() => setSelected(null)}
-            >
-                <div className="infoWindow">
-                    <h1>Some fancy place here</h1>
-                    <img src="/example.jpg"></img>
-                    <p>In this place in the year of ... bla bla bla bla bla</p>
-                    <h5 style={{color: rarityColors[selected.rarity]}}>{selected.rarity}</h5>
-                </div>
-            </InfoWindow>*/}
         </GoogleMap>
 
         {selected !== null ? (
