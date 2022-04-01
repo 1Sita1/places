@@ -10,10 +10,17 @@ const dragStart = (props) => {
 
 function InfoBar(props) {
 
-
   return (
     <div className='infoBar'>
-        <div className='imgWrap'><img className='InfoBarImg' src={props.img}></img></div>
+        <div className='imgWrap'><img className='InfoBarImg' height="100" width="100" src={props.img}></img></div>
+        <div className='ratingWrapper'>
+          <span className='placeVotes'>{ props.rating.votes } votes</span>
+          <div className='starsWrapper'>
+            { props.rating.stars.map((star, id) => {
+              return <img src={ star ? 'star.png' : 'starTemplate.png' } key={id}></img>
+            })}
+          </div>
+        </div>
         <div className='infoBarInfo'>
           <h2 className='infoBarHeader'>{props.header}</h2>
           <p className='infoBarBody'>{props.children}</p>
