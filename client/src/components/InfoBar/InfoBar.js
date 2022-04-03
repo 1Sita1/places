@@ -1,7 +1,6 @@
 import React from 'react'
 import { useEffect, useState } from 'react/cjs/react.production.min';
 import "./InfoBar.css";
-import interact from 'https://cdn.interactjs.io/v1.10.11/interactjs/index.js'
 
 
 const dragStart = (props) => {
@@ -24,6 +23,7 @@ function InfoBar(props) {
         <div className='infoBarInfo'>
           <h2 className='infoBarHeader'>{props.header}</h2>
           <p className='infoBarBody'>{props.children}</p>
+          <small className="text-muted">Created by {props.created.by}</small>
         </div>
         <div className='infoBarClose' onClick={() => props.onCloseClick()}></div>
     </div>

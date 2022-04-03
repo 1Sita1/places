@@ -6,7 +6,7 @@ import {
     InfoWindow,
 } from "@react-google-maps/api"
 import mapStyles from "./MapStyles";
-import getMarkers from "./getMarkers";
+import getMarkers from "../../fakeAPI/getMarkers";
 import "./Map.css"
 import InfoBar from "../InfoBar/InfoBar";
 
@@ -56,8 +56,7 @@ function Map(){
     }, [])
 
     useEffect(() => {
-        getMarkers()
-            .then(result => setMarkers(result))
+        getMarkers().then(result => setMarkers(result))
     })
 
     const mapRef = useRef()
@@ -98,6 +97,7 @@ function Map(){
                 header={selected.rarity}
                 img={selected.img}
                 rating={selected.rating}
+                created={selected.created}
                 onCloseClick={() => setSelected(null)}
             >
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In venenatis lorem vel faucibus sagittis. Aenean condimentum vel velit ac porta. Maecenas malesuada erat nec tellus mollis volutpat. Praesent convallis a nibh in finibus. Maecenas ex nibh, rutrum vitae sagittis at, feugiat eget sem. Vivamus nec maximus eros. Mauris vel molestie nisl. Integer vitae odio viverra, sollicitudin tortor id, semper eros. Aenean pulvinar sit amet ex a faucibus. Nulla aliquet vestibulum enim. Curabitur vel dignissim nisl, in convallis nulla.

@@ -12,6 +12,10 @@ function getMarkers() {
                             stars: [true, true, true, false, false],
                             votes: 1927
                         },
+                        "created": {
+                            by: "Nickname",
+                            time: "12:01 Dec 5 2022"
+                        },
                         "img": "placeImg/effel.jpg"
                     },
                     {
@@ -22,6 +26,10 @@ function getMarkers() {
                         "rating" : {
                             stars: [true, true, true, true, false],
                             votes: 96215
+                        },
+                        "created": {
+                            by: "Nickname",
+                            time: "12:01 Dec 5 2022"
                         },
                         "img": "placeImg/leipzig.jpg"
                     },
@@ -34,6 +42,10 @@ function getMarkers() {
                             stars: [true, true, false, false, false],
                             votes: 1
                         },
+                        "created": {
+                            by: "Nickname",
+                            time: "12:01 Dec 5 2022"
+                        },
                         "img": "placeImg/example.jpg"
                     },
                     {
@@ -45,6 +57,10 @@ function getMarkers() {
                             stars: [true, false, false, false, false],
                             votes: 178
                         },
+                        "created": {
+                            by: "Nickname",
+                            time: "12:01 Dec 5 2022"
+                        },
                         "img": "placeImg/test2.jpg"
                     },
                     {
@@ -55,6 +71,10 @@ function getMarkers() {
                         "rating" : {
                             stars: [true, true, true, true, true],
                             votes: 971
+                        },
+                        "created": {
+                            by: "Nickname",
+                            time: "12:01 Dec 5 2022"
                         },
                         "img": "placeImg/brand.jpg"
                     },
