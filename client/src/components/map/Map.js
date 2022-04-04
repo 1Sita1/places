@@ -45,10 +45,15 @@ function Map(){
 
     const [markers, setMarkers] = useState([])
     const [selected, setSelected] = useState(null)
+    const [controlDialog, setControlDialog] = useState(null)
     const [zoom, setZoom] = useState(defaultZoom)
 
     const onMapClick = useCallback(event => {
         setSelected(null)
+    }, [])
+
+    const mapRightClick = useCallback(event => {
+        setControlDialog({lat: event.latLng.lat(), lng: event.latLng.lng()})
     }, [])
 
     const onZoomChanged = useCallback(function() {
@@ -76,6 +81,7 @@ function Map(){
             center={center}
             options={options}
             onClick={onMapClick}
+            onRightClick={mapRightClick}
             onZoomChanged={onZoomChanged}
             onLoad={onMapLoad}
         >
@@ -90,6 +96,16 @@ function Map(){
                 }}
                 onClick={() => setSelected(marker)}
             />)}
+
+            {controlDialog ? 
+                (<div className="controlDialog">
+                    <ul>
+                        <li>Add place</li>
+                        <li>Add place</li>
+                        <li>Add place</li>
+                    </ul>
+                </div>)
+            : null}
         </GoogleMap>
 
         {selected !== null ? (
@@ -107,7 +123,8 @@ function Map(){
                 <br></br>
                 <br></br>
                 Praesent pulvinar, metus at maximus condimentum, lacus massa facilisis mauris, non laoreet risus velit et quam. Morbi aliquam euismod urna ut pharetra. Quisque ac dui maximus, lacinia libero et, imperdiet nibh. Donec efficitur orci neque, ut sagittis velit sagittis sed. Morbi ut pharetra dui, eu pellentesque sapien. Fusce a turpis ac sem dictum porta. Vestibulum consequat justo ut odio hendrerit, id mattis erat sagittis. Nam quam purus, tristique nec tincidunt a, aliquam mattis odio. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas viverra tellus vel justo sagittis, ut condimentum nunc efficitur. Suspendisse vitae nisl neque. Praesent commodo fermentum luctus. Pellentesque a neque quis purus lacinia ullamcorper non ut mi. Nunc purus massa, sodales non aliquet sed, tempor interdum lacus. Duis quis ante vehicula, sodales lorem sit amet, ullamcorper tortor.    
-            </InfoBar>) : null}
+            </InfoBar>) 
+        : null}
         
         </>
     );
