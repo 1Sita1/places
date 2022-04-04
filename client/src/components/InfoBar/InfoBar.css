@@ -12,7 +12,7 @@
   align-items: center;
   z-index: 10;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  overflow-y: scroll;
+  overflow-y: scroll; 
 }
 .infoBar::-webkit-scrollbar-track {
   background-color: #f5f5f5;
