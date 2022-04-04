@@ -20,7 +20,6 @@ export const Auth = ({user, setUser}) => {
 
 
     const handleAuth = (e) => {
-
         if (mode == "register") {
             if (!email || !login || !password || !password2) return
             e.preventDefault()
