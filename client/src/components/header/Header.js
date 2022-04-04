@@ -3,7 +3,9 @@ import { Auth } from '../Auth/Auth';
 
 function Header({user, setUser}) {
 
-    
+    const addSpot = (e) => {
+        
+    }
 
     return(
         <>
@@ -11,15 +13,29 @@ function Header({user, setUser}) {
                 <div className='container-fluid d-flex align-items-center justify-content-between'>
                     <span className='navbar-brand h2'>MP</span>
                     <span>
-                        { user ? <span style={{marginRight: "30px"}}>{user.name}</span> : null}
-                        <button 
-                            type='button' 
-                            className={"btn " + (user ? "btn-success" : "btn-primary")} 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#exampleModalCenter"
-                        >                   
-                            Add spot
-                        </button>
+                        { user ? 
+                            <>
+                                <span style={{marginRight: "30px"}}>{user.name}</span>
+                                <button 
+                                    type='button' 
+                                    className={"btn btn-success"} 
+                                    onClick={addSpot}
+                                >                   
+                                    Add spot
+                                </button>
+                            </>
+                        :   
+                            <>
+                                <button 
+                                    type='button' 
+                                    className={"btn btn-primary"} 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#exampleModalCenter"
+                                >                   
+                                    Add spot
+                                </button>
+                            </>
+                        }
                     </span>
                 </div>
             </div>
