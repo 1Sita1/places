@@ -1,45 +1,24 @@
-import { React, useState, useContext } from 'react'
+import { React, useState, useEffect, useRef } from 'react'
 import { Auth } from '../Auth/Auth';
 
 function Header({user, setUser}) {
 
+    const [modal, setModal] = useState(false)
+
     const addSpot = (e) => {
-        
+        setModal(true)
     }
 
     return(
         <>
-            <div className='navbar navbar-expand-lg fixed-top navbar-dark bg-dark bg-transparent text-white'>
+            <div className='navbar navbar-expand-lg fixed-top navbar-dark bg-dark bg-transparent text-white px-4' id='modal'>
                 <div className='container-fluid d-flex align-items-center justify-content-between'>
                     <span className='navbar-brand h2'>MP</span>
                     <span>
-                        { user ? 
-                            <>
-                                <span style={{marginRight: "30px"}}>{user.name}</span>
-                                <button 
-                                    type='button' 
-                                    className={"btn btn-success"} 
-                                    onClick={addSpot}
-                                >                   
-                                    Add spot
-                                </button>
-                            </>
-                        :   
-                            <>
-                                <button 
-                                    type='button' 
-                                    className={"btn btn-primary"} 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#exampleModalCenter"
-                                >                   
-                                    Add spot
-                                </button>
-                            </>
-                        }
+                        <Auth user={user} setUser={setUser}></Auth>
                     </span>
                 </div>
             </div>
-            <Auth user={user} setUser={setUser}></Auth>
         </>
     )
 }

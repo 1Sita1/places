@@ -1,8 +1,10 @@
 import { React, useState, useEffect, useRef, useContext } from 'react'
+import { Modal, Button } from 'react-bootstrap'
 import loginApi from '../../fakeAPI/login'
 
 export const Auth = ({user, setUser}) => {
 
+    const [modalShow, setModalShow] = useState(false)
     const [mode, setMode] = useState("login")
     const [email, setEmail] = useState("")
     const [login, setLogin] = useState("")
@@ -12,10 +14,10 @@ export const Auth = ({user, setUser}) => {
 
     const emailRef = useRef(null)
     const loginRef = useRef(null)
-    const dismissRef = useRef(null)
     const passwordRef = useRef(null)
     const password2Ref = useRef(null)
     const submitRef = useRef(null)
+    const dismissRef = useRef(null)
 
 
 
@@ -80,47 +82,61 @@ export const Auth = ({user, setUser}) => {
         }
     }
 
+    const handleShow = () => {
+        setModalShow(true)
+    }
+
+    const handleClose = () => {
+        setModalShow(false)
+    }
+
 
 
     return (
-        <div className="modal fade" id="exampleModalCenter" tabIndex="-1" role="dialog"  aria-hidden="true">
-            <div className="modal-dialog" role="document">
-                <div className="modal-content">
-                    <div className="modal-header">
-                    <h5 className="modal-title">{mode == "login" ? "Log in" : "Register"}</h5>
-                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <>
+            { user ? 
+                <span style={{display: "flex", alignItems: "center"}}>
+                    <img src='user.png' width={"32px"} style={{marginRight: "15px"}}></img>
+                    <h5>{user.name}</h5> 
+                </span>
+            :
+                <Button variant="primary" onClick={handleShow}>
+                    Log in
+                </Button>
+            }
+
+            <Modal show={modalShow} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{mode == "login" ? "Log in" : "Register"}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {mode == "register"? <div className="form-group">
+                        <label className="col-form-label">Email</label>
+                        <input ref={emailRef} className="form-control" type="email" id="emailInput" aria-describedby="emailHelp" onChange={(e) => setEmail(e.target.value)} onKeyPress={onKeyUp} placeholder="name@example.com" required></input>
+                    </div> : null}
+                    <div className="form-group">
+                        <label className="col-form-label">Username</label>
+                        <input ref={loginRef} className="form-control" type="text" id="loginInput" onChange={(e) => setLogin(e.target.value)} onKeyPress={onKeyUp} placeholder="Your fancy username" required></input>
                     </div>
-                    <form>
-                        <div className="modal-body" style={{"textAlign": "left"}}>
-                            {mode == "register"? <div className="form-group">
-                                <label className="col-form-label">Email</label>
-                                <input ref={emailRef} className="form-control" type="email" id="emailInput" aria-describedby="emailHelp" onChange={(e) => setEmail(e.target.value)} onKeyPress={onKeyUp} placeholder="name@example.com" required></input>
-                            </div> : null}
-                            <div className="form-group">
-                                <label className="col-form-label">Username</label>
-                                <input ref={loginRef} className="form-control" type="text" id="loginInput" onChange={(e) => setLogin(e.target.value)} onKeyPress={onKeyUp} placeholder="Your fancy username" required></input>
-                            </div>
-                            <div className="form-group">
-                                <label className="col-form-label">Password</label>
-                                <input ref={passwordRef} type="password" className="form-control" id="passwordInput" onChange={(e) => setPassword(e.target.value)} onKeyPress={onKeyUp} placeholder="Your super secret password" required></input>
-                            </div>
-                            {mode == "register"? <div className="form-group">
-                                <label className="col-form-label">Password again</label>
-                                <input ref={password2Ref} type="password" className="form-control" id="passwordInput2" onChange={(e) => setPassword2(e.target.value)} onKeyPress={onKeyUp} placeholder="Your super secret password again" required></input>
-                                <small className="text-danger">{password != password2 ? "Passwords do not match" : null}</small>
-                            </div> : null}
-                        </div>
-                        <div className="modal-footer">
-                            <small className="text-muted" onClick={changeMode} style={{"cursor" : "pointer"}}>{mode == "login" ? "Dont have an account?" : "Already registered?"}</small>
-                            <button ref={submitRef} type="submit" className="btn btn-primary" onClick={handleAuth}>
-                                {mode == "login" ? "Log in" : "Register"}
-                                {waitingResponse ? <span className="spinner-border spinner-border-sm ml-2" role="status" aria-hidden="true"></span> : null}
-                            </button>
-                            <button ref={dismissRef} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+                    <div className="form-group">
+                        <label className="col-form-label">Password</label>
+                        <input ref={passwordRef} type="password" className="form-control" id="passwordInput" onChange={(e) => setPassword(e.target.value)} onKeyPress={onKeyUp} placeholder="Your super secret password" required></input>
+                    </div>
+                    {mode == "register"? <div className="form-group">
+                        <label className="col-form-label">Password again</label>
+                        <input ref={password2Ref} type="password" className="form-control" id="passwordInput2" onChange={(e) => setPassword2(e.target.value)} onKeyPress={onKeyUp} placeholder="Your super secret password again" required></input>
+                        <small className="text-danger">{password !== password2 ? "Passwords do not match" : null}</small>
+                    </div> : null}
+                </Modal.Body>
+                <Modal.Footer>
+                    <small className="text-muted" onClick={changeMode} style={{"cursor" : "pointer"}}>{mode == "login" ? "Dont have an account?" : "Already registered?"}</small>
+                    <Button ref={submitRef} type="submit" className="btn btn-primary" onClick={handleAuth}>
+                        {mode == "login" ? "Log in" : "Register"}
+                        {waitingResponse ? <span className="spinner-border spinner-border-sm ml-2" role="status" aria-hidden="true"></span> : null}
+                    </Button>
+                    <Button ref={dismissRef} onClick={handleClose} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</Button>
+                </Modal.Footer>
+            </Modal>
+        </>
     )
 }
