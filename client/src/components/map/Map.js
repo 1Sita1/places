@@ -4,11 +4,14 @@ import {
     useLoadScript,
     Marker,
     InfoWindow,
+    OverlayView,
+    InfoBox
 } from "@react-google-maps/api"
 import mapStyles from "./MapStyles";
 import getMarkers from "../../fakeAPI/getMarkers";
 import "./Map.css"
 import InfoBar from "../InfoBar/InfoBar";
+import { Button } from "react-bootstrap";
 
 const libraries = [
     "places",
@@ -106,6 +109,13 @@ function Map(){
                     </ul>
                 </div>)
             : null}
+
+            <InfoWindow position={center}>
+                <div style={{padding: 4}}>
+                    <Button>Add spot</Button>
+                </div>
+            </InfoWindow>
+
         </GoogleMap>
 
         {selected !== null ? (

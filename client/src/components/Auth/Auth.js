@@ -51,6 +51,10 @@ export const Auth = ({user, setUser}) => {
         }
     }
 
+    const handleLogout = (e) => {
+        setUser(null)
+    }
+
     useEffect(() => console.log(user))
 
 
@@ -96,8 +100,9 @@ export const Auth = ({user, setUser}) => {
         <>
             { user ? 
                 <span style={{display: "flex", alignItems: "center"}}>
-                    <img src='user.png' width={"32px"} style={{marginRight: "15px"}}></img>
-                    <h5>{user.name}</h5> 
+                    <img src='user.png' width={"28px"} style={{marginRight: "15px", filter: "invert(1)"}}></img>
+                    <h5 style={{marginRight: "15px"}}>{user.name}</h5> 
+                    <Button variant="outline-danger" size="sm" onClick={handleLogout}>Log out</Button>
                 </span>
             :
                 <Button variant="primary" onClick={handleShow}>
