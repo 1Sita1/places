@@ -13,7 +13,7 @@ function Header({user, setUser}) {
         <>
             <div className='navbar navbar-expand-lg fixed-top navbar-dark bg-dark bg-transparent text-white px-4' id='modal'>
                 <div className='container-fluid d-flex align-items-center justify-content-between'>
-                    <span className='navbar-brand h2'>MP</span>
+                    <span className='navbar-brand h2' style={{cursor: "default"}}>MP</span>
                     <span>
                         <Auth user={user} setUser={setUser}></Auth>
                     </span>

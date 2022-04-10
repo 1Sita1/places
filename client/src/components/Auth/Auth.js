@@ -55,8 +55,6 @@ export const Auth = ({user, setUser}) => {
         setUser(null)
     }
 
-    useEffect(() => console.log(user))
-
 
 
     const changeMode = () => {
@@ -100,7 +98,6 @@ export const Auth = ({user, setUser}) => {
         <>
             { user ? 
                 <span style={{display: "flex", alignItems: "center"}}>
-                    <img src='user.png' width={"28px"} style={{marginRight: "15px", filter: "invert(1)"}}></img>
                     <h5 style={{marginRight: "15px"}}>{user.name}</h5> 
                     <Button variant="outline-danger" size="sm" onClick={handleLogout}>Log out</Button>
                 </span>

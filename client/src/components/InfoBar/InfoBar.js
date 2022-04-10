@@ -7,25 +7,31 @@ const dragStart = (props) => {
   alert()
 }
 
-function InfoBar(props) {
+function InfoBar({ img, rating,  header, children, created, onCloseClick, style }) {
 
   return (
-    <div className='infoBar'>
-        <div className='imgWrap'><img className='InfoBarImg' height="100" width="100" src={props.img}></img></div>
+    <div className='infoBar' style={style ?? null}>
+        <div className='imgWrap'><img className='InfoBarImg' height="100" width="100" src={img}></img></div>
         <div className='ratingWrapper'>
-          <span className='placeVotes'>{ props.rating.votes } votes</span>
+          <span className='placeVotes'>{ rating.votes } votes</span>
           <div className='starsWrapper'>
-            { props.rating.stars.map((star, id) => {
+            { rating.stars.map((star, id) => {
               return <img src={ star ? 'star.png' : 'starTemplate.png' } key={id}></img>
-            })}
+            }) }
           </div>
         </div>
         <div className='infoBarInfo'>
-          <h2 className='infoBarHeader'>{props.header}</h2>
-          <p className='infoBarBody'>{props.children}</p>
-          <small className="text-muted">Created by {props.created.by}</small>
+          <div className='topPart'>
+            <h2 className='infoBarHeader'>{ header }</h2>
+            <p className='infoBarBody' style={{whiteSpace: "pre-line"}}>{children ?? "Lorem ipsum..."}</p>
+          </div>
+          <div className='bottomPart'>
+            <small className="text-muted">Created by { created.by }</small>
+            <br></br>
+            <small className="text-muted">{ created.date }</small>
+          </div>
         </div>
-        <div className='infoBarClose' onClick={() => props.onCloseClick()}></div>
+        <div className='infoBarClose' onClick={() => onCloseClick()}></div>
     </div>
   )
 }
