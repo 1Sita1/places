@@ -11,7 +11,7 @@ function App() {
   return (
     <div className="App">
         <Header user={user} setUser={setUser}></Header>
-        <Map user={user} />
+        <Map user={user} setUser={setUser}/>
     </div>
   );
 }

@@ -12,6 +12,7 @@ import getMarkers from "../../fakeAPI/getMarkers";
 import "./Map.css"
 import InfoBar from "../InfoBar/InfoBar";
 import SpotAdd from "../SpotAdd/SpotAdd";
+import AuthModal from "../AuthModal/AuthModal";
 import { Button } from "react-bootstrap";
 
 const libraries = [
@@ -40,7 +41,7 @@ const rarityColors = {
 }
 
 
-function Map({ user }){
+function Map({ user, setUser }){
 
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: "AIzaSyAw6mcd0lwML_h3PPeH0n_nt6bu_TNnfSE",
@@ -51,6 +52,7 @@ function Map({ user }){
     const [selected, setSelected] = useState(null)
     const [controlDialog, setControlDialog] = useState(null)
     const [spotModal, setSpotModal] = useState(false)
+    const [authModal, setAuthModal] = useState(false)
     const [zoom, setZoom] = useState(defaultZoom)
 
     const onMapClick = (event) => {
@@ -71,7 +73,10 @@ function Map({ user }){
     }
 
     const addSpot = () => {
-        setSpotModal(true)
+        if(user) setSpotModal(true)
+        else {
+            setAuthModal(true)
+        }
     }
 
     useEffect(() => {
@@ -138,6 +143,8 @@ function Map({ user }){
                     Praesent pulvinar, metus at maximus condimentum, lacus massa facilisis mauris, non laoreet risus velit et quam. Morbi aliquam euismod urna ut pharetra. Quisque ac dui maximus, lacinia libero et, imperdiet nibh. Donec efficitur orci neque, ut sagittis velit sagittis sed. Morbi ut pharetra dui, eu pellentesque sapien. Fusce a turpis ac sem dictum porta. Vestibulum consequat justo ut odio hendrerit, id mattis erat sagittis. Nam quam purus, tristique nec tincidunt a, aliquam mattis odio. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas viverra tellus vel justo sagittis, ut condimentum nunc efficitur. Suspendisse vitae nisl neque. Praesent commodo fermentum luctus. Pellentesque a neque quis purus lacinia ullamcorper non ut mi. Nunc purus massa, sodales non aliquet sed, tempor interdum lacus. Duis quis ante vehicula, sodales lorem sit amet, ullamcorper tortor.    
                 </InfoBar>) 
             : null }
+
+            {authModal ? <AuthModal show={true} user={user} setUser={setUser}></AuthModal> : null}
 
             <SpotAdd 
                 show={spotModal} 

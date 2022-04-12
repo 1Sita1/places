@@ -25,7 +25,7 @@ function InfoBar({ img, rating,  header, children, created, onCloseClick, style 
             <h2 className='infoBarHeader'>{ header }</h2>
             <p className='infoBarBody' style={{whiteSpace: "pre-line"}}>{children ?? "Lorem ipsum..."}</p>
           </div>
-          <div className='bottomPart'>
+          <div className='bottomPart pb-3'>
             <small className="text-muted">Created by { created.by }</small>
             <br></br>
             <small className="text-muted">{ created.date }</small>

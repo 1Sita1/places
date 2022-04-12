@@ -14,7 +14,7 @@ function getMarkers() {
                         },
                         "created": {
                             by: "Nickname",
-                            time: "12:01 Dec 5 2022"
+                            date: "12:01 Dec 5 2022"
                         },
                         "img": "placeImg/effel.jpg"
                     },
@@ -29,7 +29,7 @@ function getMarkers() {
                         },
                         "created": {
                             by: "Nickname",
-                            time: "12:01 Dec 5 2022"
+                            date: "12:01 Dec 5 2022"
                         },
                         "img": "placeImg/leipzig.jpg"
                     },
@@ -44,7 +44,7 @@ function getMarkers() {
                         },
                         "created": {
                             by: "Nickname",
-                            time: "12:01 Dec 5 2022"
+                            date: "12:01 Dec 5 2022"
                         },
                         "img": "placeImg/example.jpg"
                     },
@@ -59,7 +59,7 @@ function getMarkers() {
                         },
                         "created": {
                             by: "Nickname",
-                            time: "12:01 Dec 5 2022"
+                            date: "12:01 Dec 5 2022"
                         },
                         "img": "placeImg/test2.jpg"
                     },
@@ -74,7 +74,7 @@ function getMarkers() {
                         },
                         "created": {
                             by: "Nickname",
-                            time: "12:01 Dec 5 2022"
+                            date: "12:01 Dec 5 2022"
                         },
                         "img": "placeImg/brand.jpg"
                     },

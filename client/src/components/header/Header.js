@@ -1,12 +1,22 @@
 import { React, useState, useEffect, useRef } from 'react'
-import { Auth } from '../Auth/Auth';
+import { Button } from 'react-bootstrap'
+import AuthModal from '../AuthModal/AuthModal';
 
 function Header({user, setUser}) {
 
-    const [modal, setModal] = useState(false)
+    const [modalShow, setModalShow] = useState(false)
 
-    const addSpot = (e) => {
-        setModal(true)
+    const handleLogout = (e) => {
+        setUser(null)
+    }
+
+    const handleShow = () => {
+        setModalShow(true)
+    }
+
+    const handleClose = () => {
+        console.log("awdaw")
+        setModalShow(false)
     }
 
     return(
@@ -15,7 +25,17 @@ function Header({user, setUser}) {
                 <div className='container-fluid d-flex align-items-center justify-content-between'>
                     <span className='navbar-brand h2' style={{cursor: "default"}}>MP</span>
                     <span>
-                        <Auth user={user} setUser={setUser}></Auth>
+                    { user ? 
+                        <span style={{display: "flex", alignItems: "center"}}>
+                            <h5 style={{marginRight: "15px"}}>{user.name}</h5> 
+                            <Button variant="outline-danger" size="sm" onClick={handleLogout}>Log out</Button>
+                        </span>
+                    :
+                        <Button variant="primary" onClick={handleShow}>
+                            Log in
+                        </Button>
+                    }
+                        <AuthModal show={modalShow} handleClose={handleClose} user={user} setUser={setUser}></AuthModal>
                     </span>
                 </div>
             </div>
