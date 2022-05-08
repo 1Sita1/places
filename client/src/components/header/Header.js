@@ -25,16 +25,16 @@ function Header({user, setUser}) {
                 <div className='container-fluid d-flex align-items-center justify-content-between'>
                     <span className='navbar-brand h2' style={{cursor: "default"}}>MP</span>
                     <span>
-                    { user ? 
-                        <span style={{display: "flex", alignItems: "center"}}>
-                            <h5 style={{marginRight: "15px"}}>{user.name}</h5> 
-                            <Button variant="outline-danger" size="sm" onClick={handleLogout}>Log out</Button>
-                        </span>
-                    :
-                        <Button variant="primary" onClick={handleShow}>
-                            Log in
-                        </Button>
-                    }
+                        { user ? 
+                            <span style={{display: "flex", alignItems: "center"}}>
+                                <h5 style={{marginRight: "15px"}}>{user.name}</h5> 
+                                <Button variant="outline-danger" size="sm" onClick={handleLogout}>Log out</Button>
+                            </span>
+                        :
+                            <Button variant="primary" onClick={handleShow}>
+                                Log in
+                            </Button>
+                        }
                         <AuthModal show={modalShow} handleClose={handleClose} user={user} setUser={setUser}></AuthModal>
                     </span>
                 </div>

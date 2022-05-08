@@ -1,52 +1,74 @@
 import { React, useState, useRef } from "react"
 import { Modal, Button } from 'react-bootstrap'
-import loginApi from '../../fakeAPI/login'
+import useInput from "../../hooks/useInput"
 
 const AuthModal = ({ show, handleClose, setUser }) => {
 
     const [mode, setMode] = useState("login")
-    const [email, setEmail] = useState("")
-    const [login, setLogin] = useState("")
-    const [password, setPassword] = useState("")
-    const [password2, setPassword2] = useState("")
+    const emailInput = useInput("")
+    const loginInput = useInput("")
+    const passwordInput = useInput("")
+    const password2Input = useInput("")
     const [waitingResponse, setWaitingResponse] = useState(false)
 
     const emailRef = useRef(null)
-    const loginRef = useRef(null)
-    const passwordRef = useRef(null)
-    const password2Ref = useRef(null)
     const submitRef = useRef(null)
     const dismissRef = useRef(null)
 
 
 
     const handleAuth = (e) => {
-        if (mode == "register") {
-            if (!email || !login || !password || !password2) return
-            e.preventDefault()
+        e.preventDefault()
 
-            if (password != password2) return
+        if (mode == "register") {
+            const isEmpty = emailInput.value && loginInput.value && passwordInput.value && password2Input.value
+            console.log(isEmpty)
+            if (isEmpty) return
+
+            if (passwordInput.value != password2Input.value) return
 
             setWaitingResponse(true)
-            loginApi(login, password).then(() => {
-                alert("success")
-            }).catch(() => {
-                alert("failed")
-            }).finally(() => setWaitingResponse(false))
+            const options = {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: {
+                    action: "register",
+                    email: emailInput.value,
+                    username: loginInput.value, 
+                    password: passwordInput.value
+                }
+            }
+
+            fetch("http://localhost:5000/api/auth", options)
+                .then(result => result.json())
+                .then(json => {
+                    console.log(json)
+                    dismissRef.current.click()
+                    setUser({
+                        name: "abobusS",
+                    })
+                })
+                .catch(() => console.log("failed"))
+                .finally(() => setWaitingResponse(false))
         }
         else {
-            if (!login || !password) return
-            e.preventDefault()
+            if (!loginInput.value || !passwordInput.value) return
 
             setWaitingResponse(true)
-            loginApi(login, password).then(() => {
-                dismissRef.current.click()
-                setUser({
-                    name: "abobusS",
+
+            fetch("http://localhost:5000/api/auth/test", {method: "POST"})
+                .then(result => result.json())
+                .then(json => {
+                    console.log(json)
+                    dismissRef.current.click()
+                    setUser({
+                        name: "abobusS",
+                    })
                 })
-            }).catch(() => {
-                alert("failed")
-            }).finally(() => setWaitingResponse(false))
+                .catch(() => console.log("failed"))
+                .finally(() => setWaitingResponse(false))
         }
     }
 
@@ -58,24 +80,25 @@ const AuthModal = ({ show, handleClose, setUser }) => {
         if (e.key != "Enter") return
 
         if (mode == "register") {
-            if (email == "") emailRef.current.focus()
-            else if (login == "") loginRef.current.focus()
-            else if (password == "") passwordRef.current.focus()
-            else if (password2 == "") password2Ref.current.focus()
+            if (emailInput.value == "") emailInput.ref.current.focus()
+            else if (loginInput.value == "") loginInput.ref.current.focus()
+            else if (passwordInput.value == "") passwordInput.ref.current.focus()
+            else if (password2Input.value == "") password2Input.ref.current.focus()
             else {
                 submitRef.current.click()
                 submitRef.current.focus()
             }
         }
         else {
-            if (login == "") loginRef.current.focus()
-            else if (password == "") passwordRef.current.focus()
+            if (loginInput.value == "") loginInput.ref.current.focus()
+            else if (passwordInput.value == "") passwordInput.ref.current.focus()
             else {
                 submitRef.current.click()
                 submitRef.current.focus()
             }
         }
     }
+
 
     return (
         <Modal show={show} onHide={handleClose}>
@@ -85,20 +108,57 @@ const AuthModal = ({ show, handleClose, setUser }) => {
             <Modal.Body>
                 {mode == "register"? <div className="form-group">
                     <label className="col-form-label">Email</label>
-                    <input ref={emailRef} className="form-control" type="email" id="emailInput" aria-describedby="emailHelp" onChange={(e) => setEmail(e.target.value)} onKeyPress={onKeyUp} placeholder="name@example.com" required></input>
+                    <input 
+                        ref={emailInput.ref} 
+                        className="form-control" 
+                        type="email" 
+                        id="emailInput" 
+                        aria-describedby="emailHelp" 
+                        onChange={emailRef.onChange} 
+                        onKeyPress={onKeyUp} 
+                        placeholder="name@example.com"
+                        required>
+                    </input>
                 </div> : null}
                 <div className="form-group">
                     <label className="col-form-label">Username</label>
-                    <input ref={loginRef} className="form-control" type="text" id="loginInput" onChange={(e) => setLogin(e.target.value)} onKeyPress={onKeyUp} placeholder="Your fancy username" required></input>
+                    <input 
+                        ref={loginInput.ref} 
+                        className="form-control" 
+                        type="text" 
+                        id="loginInput" 
+                        onChange={loginInput.onChange} 
+                        onKeyPress={onKeyUp} 
+                        placeholder="Your fancy username" 
+                        required>
+                    </input>
                 </div>
                 <div className="form-group">
                     <label className="col-form-label">Password</label>
-                    <input ref={passwordRef} type="password" className="form-control" id="passwordInput" onChange={(e) => setPassword(e.target.value)} onKeyPress={onKeyUp} placeholder="Your super secret password" required></input>
+                    <input 
+                        ref={passwordInput.ref} 
+                        type="password" 
+                        className="form-control" 
+                        id="passwordInput" 
+                        onChange={passwordInput.onChange} 
+                        onKeyPress={onKeyUp} 
+                        placeholder="Your super secret password" 
+                        required>
+                    </input>
                 </div>
                 {mode == "register"? <div className="form-group">
                     <label className="col-form-label">Password again</label>
-                    <input ref={password2Ref} type="password" className="form-control" id="passwordInput2" onChange={(e) => setPassword2(e.target.value)} onKeyPress={onKeyUp} placeholder="Your super secret password again" required></input>
-                    <small className="text-danger">{password !== password2 ? "Passwords do not match" : null}</small>
+                    <input 
+                        ref={password2Input.ref} 
+                        type="password" 
+                        className="form-control" 
+                        id="passwordInput2" 
+                        onChange={password2Input.onChange} 
+                        onKeyPress={onKeyUp} 
+                        placeholder="Your super secret password again" 
+                        required>
+                    </input>
+                    <small className="text-danger">{passwordInput.value !== password2Input.value ? "Passwords do not match" : null}</small>
                 </div> : null}
             </Modal.Body>
             <Modal.Footer>

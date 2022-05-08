@@ -8,15 +8,14 @@ import {
     InfoBox
 } from "@react-google-maps/api"
 import mapStyles from "./MapStyles";
-import getMarkers from "../../fakeAPI/getMarkers";
 import "./Map.css"
 import InfoBar from "../InfoBar/InfoBar";
-import SpotAdd from "../SpotAdd/SpotAdd";
+import SpotModal from "../SpotModal/SpotModal";
 import AuthModal from "../AuthModal/AuthModal";
 import { Button } from "react-bootstrap";
 
 const libraries = [
-    "places",
+    "places"
 ]
 
 const mapContainerStyle = {
@@ -34,12 +33,6 @@ const options = {
 }
 const defaultZoom = 4
 
-const rarityColors = {
-    "gold": "rgb(177, 192, 47)",
-    "silver": "rgb(179, 185, 163)",
-    "bronze": "rgb(184, 120, 36)"
-}
-
 
 function Map({ user, setUser }){
 
@@ -55,11 +48,21 @@ function Map({ user, setUser }){
     const [authModal, setAuthModal] = useState(false)
     const [zoom, setZoom] = useState(defaultZoom)
 
+    const mapRef = useRef()
+    const onMapLoad = useCallback(map => {
+        mapRef.current = map
+    }, [])
+
+    useEffect(() => {
+        fetch("http://localhost:5000/api/markers")
+            .then(result => result.json())
+            .then(json => setMarkers(json))
+    }, [])
+
     const onMapClick = (event) => {
         setSelected(null)
         setControlDialog(null)
     }
-
     const mapRightClick = (event) => {
         setControlDialog({lat: event.latLng.lat(), lng: event.latLng.lng()})
     }
@@ -79,14 +82,9 @@ function Map({ user, setUser }){
         }
     }
 
-    useEffect(() => {
-        getMarkers().then(result => setMarkers(result))
-    })
-
-    const mapRef = useRef()
-    const onMapLoad = useCallback(map => {
-        mapRef.current = map
-    }, [])
+    const authModalClose = () => {
+        setAuthModal(false)
+    }
 
     if (loadError) return "Error loading maps"
     if (!isLoaded) return "Loading maps"
@@ -104,17 +102,26 @@ function Map({ user, setUser }){
                 onZoomChanged={onZoomChanged}
                 onLoad={onMapLoad}
             >
-                { markers.map(marker => <Marker 
-                    key={marker.time} 
-                    position={{lat: marker.lat, lng: marker.lng}}
-                    icon={{
-                        url: "markers/" + marker.rarity + "Marker.svg",
-                        scaledSize: new window.google.maps.Size(30, 30),
-                        origin: new window.google.maps.Point(0, 0),
-                        anchor: new window.google.maps.Point(15, 20),
-                    }}
-                    onClick={() => {setSelected(null); setSelected(marker)}}
-                />) }
+                { 
+                    markers.map(marker => {
+                        if (zoom <= 5 && (marker.rarity == "silver" || marker.rarity == "bronze")) return null
+                        if (zoom <= 7 && (marker.rarity == "bronze")) return null
+
+                        return (
+                            <Marker 
+                                key={marker.time} 
+                                position={{lat: marker.lat, lng: marker.lng}}
+                                icon={{
+                                    url: "markers/" + marker.rarity + "Marker.svg",
+                                    scaledSize: new window.google.maps.Size(30, 30),
+                                    origin: new window.google.maps.Point(0, 0),
+                                    anchor: new window.google.maps.Point(15, 20),
+                                }}
+                                onClick={() => {setSelected(null); setSelected(marker)}}
+                            />
+                        )
+                    }) 
+                }
 
                 { controlDialog ? 
                     <InfoWindow position={controlDialog} onCloseClick={controlDialogClose}>
@@ -134,25 +141,56 @@ function Map({ user, setUser }){
                     created={selected.created}
                     onCloseClick={() => setSelected(null)}
                 >
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. In venenatis lorem vel faucibus sagittis. Aenean condimentum vel velit ac porta. Maecenas malesuada erat nec tellus mollis volutpat. Praesent convallis a nibh in finibus. Maecenas ex nibh, rutrum vitae sagittis at, feugiat eget sem. Vivamus nec maximus eros. Mauris vel molestie nisl. Integer vitae odio viverra, sollicitudin tortor id, semper eros. Aenean pulvinar sit amet ex a faucibus. Nulla aliquet vestibulum enim. Curabitur vel dignissim nisl, in convallis nulla.
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                    In venenatis lorem vel faucibus sagittis. Aenean condimentum vel velit ac porta. 
+                    Maecenas malesuada erat nec tellus mollis volutpat. Praesent convallis a nibh in finibus. 
+                    Maecenas ex nibh, rutrum vitae sagittis at, feugiat eget sem. 
+                    Vivamus nec maximus eros. Mauris vel molestie nisl. 
+                    Integer vitae odio viverra, sollicitudin tortor id, semper eros.
+                    Aenean pulvinar sit amet ex a faucibus. Nulla aliquet vestibulum enim. 
+                    Curabitur vel dignissim nisl, in convallis nulla.
                     <br></br>
                     <br></br>
-                    Etiam vestibulum ullamcorper nisl. Nam sit amet nisi rutrum, pulvinar ipsum ut, sagittis eros. Donec hendrerit libero nec sollicitudin dictum. Praesent tellus risus, ultrices vitae euismod et, dictum non quam. Donec pretium arcu ut magna rhoncus elementum. Aliquam eget eros sed leo pellentesque rhoncus vel eget est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec laoreet cursus aliquet. Curabitur non tellus sed velit maximus tincidunt. Phasellus ac dolor vulputate, tincidunt elit id, lacinia augue.
+                    Etiam vestibulum ullamcorper nisl. 
+                    Nam sit amet nisi rutrum, pulvinar ipsum ut, sagittis eros. 
+                    Donec hendrerit libero nec sollicitudin dictum. 
+                    Praesent tellus risus, ultrices vitae euismod et, dictum non quam.
+                    Donec pretium arcu ut magna rhoncus elementum. 
+                    Aliquam eget eros sed leo pellentesque rhoncus vel eget est. 
+                    Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
+                    Donec laoreet cursus aliquet. Curabitur non tellus sed velit maximus tincidunt. 
+                    Phasellus ac dolor vulputate, tincidunt elit id, lacinia augue.
                     <br></br>
                     <br></br>
-                    Praesent pulvinar, metus at maximus condimentum, lacus massa facilisis mauris, non laoreet risus velit et quam. Morbi aliquam euismod urna ut pharetra. Quisque ac dui maximus, lacinia libero et, imperdiet nibh. Donec efficitur orci neque, ut sagittis velit sagittis sed. Morbi ut pharetra dui, eu pellentesque sapien. Fusce a turpis ac sem dictum porta. Vestibulum consequat justo ut odio hendrerit, id mattis erat sagittis. Nam quam purus, tristique nec tincidunt a, aliquam mattis odio. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas viverra tellus vel justo sagittis, ut condimentum nunc efficitur. Suspendisse vitae nisl neque. Praesent commodo fermentum luctus. Pellentesque a neque quis purus lacinia ullamcorper non ut mi. Nunc purus massa, sodales non aliquet sed, tempor interdum lacus. Duis quis ante vehicula, sodales lorem sit amet, ullamcorper tortor.    
+                    Praesent pulvinar, metus at maximus condimentum, lacus massa facilisis mauris, non laoreet risus velit et quam. 
+                    Morbi aliquam euismod urna ut pharetra.
+                    Quisque ac dui maximus, lacinia libero et, imperdiet nibh. Donec efficitur orci neque, ut sagittis velit sagittis sed. 
+                    Morbi ut pharetra dui, eu pellentesque sapien. Fusce a turpis ac sem dictum porta. 
+                    Vestibulum consequat justo ut odio hendrerit, id mattis erat sagittis.
+                    Nam quam purus, tristique nec tincidunt a, aliquam mattis odio. 
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                    Maecenas viverra tellus vel justo sagittis, ut condimentum nunc efficitur. Suspendisse vitae nisl neque. 
+                    Praesent commodo fermentum luctus. Pellentesque a neque quis purus lacinia ullamcorper non ut mi. 
+                    Nunc purus massa, sodales non aliquet sed, tempor interdum lacus. 
+                    Duis quis ante vehicula, sodales lorem sit amet, ullamcorper tortor.   
                 </InfoBar>) 
             : null }
 
-            {authModal ? <AuthModal show={true} user={user} setUser={setUser}></AuthModal> : null}
+            <AuthModal 
+                show={authModal} 
+                user={user} 
+                setUser={setUser}
+                handleClose={authModalClose}
+            >
+            </AuthModal>
 
-            <SpotAdd 
+            <SpotModal 
                 show={spotModal} 
                 setSpotModal={setSpotModal} 
                 position={controlDialog}
                 user={user}
             >
-            </SpotAdd>
+            </SpotModal>
         
         </>
     );

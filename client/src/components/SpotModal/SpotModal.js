@@ -2,9 +2,9 @@ import React, { useState, useRef } from "react"
 import { Modal, Button } from 'react-bootstrap'
 import useInput from "../../hooks/useInput"
 import InfoBar from "../InfoBar/InfoBar"
-import "./SpotAdd.css"
+import "./SpotModal.css"
 
-const SpotAdd = (props) => {
+const SpotModal = (props) => {
 
     const [waitingResponse, setWaitingResponse] = useState(false)
     const [img, setImg] = useState("yes.gif")
@@ -17,40 +17,40 @@ const SpotAdd = (props) => {
     const dd = String(today.getDate()).padStart(2, '0')
     const mm = String(today.getMonth() + 1).padStart(2, '0')
     const yyyy = today.getFullYear()
-
     today = dd + '.' + mm + '.' + yyyy;
 
+    const eventHandler = (event, ...rest) => {
+        switch(event) {
 
-    const submitHandler = () => {
-        setWaitingResponse(true)
-        const request = {
-            position: props.position,
-            header: headerInput.value,
-            image: img,
-            description: descInput.value
+            case "submit": 
+                setWaitingResponse(true)
+                const request = {
+                    position: props.position,
+                    header: headerInput.value,
+                    image: img,
+                    description: descInput.value
+                }
+                console.log(request)
+            break;
+
+            case "close":
+                props.setSpotModal(null)
+            break;
+
+            case "fileUpload":
+                const reader  = new FileReader();
+                reader.readAsDataURL(rest[0]);
+                reader.onloadend = (progEvent) => {
+                    setImg(progEvent.currentTarget.result)
+                }
+            break;
+
         }
-        console.log(request)
     }
 
-    const closeHandler = () => {
-        props.setSpotModal(null)
-    }
-
-    const filesUploaded = (files) => {
-        const reader  = new FileReader();
-        reader.readAsDataURL(files[0]);
-        reader.onloadend = (progEvent) => {
-            setImg(progEvent.currentTarget.result)
-        }
-    }
-    
-    
-    const onKeyUp = (e) => {
-
-    }
 
     return (
-        <Modal size="lg" show={props.show} onHide={closeHandler}>
+        <Modal size="lg" show={props.show} onHide={() => eventHandler("close")}>
             <Modal.Header closeButton>
                 <Modal.Title>New spot</Modal.Title>
             </Modal.Header>
@@ -60,7 +60,7 @@ const SpotAdd = (props) => {
                     ref={headerInput.ref} 
                     className="form-control"
                     onChange={(e) => headerInput.onChange(e)} 
-                    onKeyPress={onKeyUp} 
+                    onKeyPress={() => null} 
                     placeholder={headerInput.value}
                     required>
                 </input>
@@ -71,7 +71,7 @@ const SpotAdd = (props) => {
                     type="file"
                     className="form-control"
                     accept="image/*"
-                    onChange={(e) => filesUploaded(e.target.files)}
+                    onChange={(e) => eventHandler("fileUpload", e.target.files[0])}
                     required>
                 </input>
 
@@ -107,17 +107,28 @@ const SpotAdd = (props) => {
                 </div>
             </Modal.Body>
             <Modal.Footer>
-                <Button type="submit" className="btn btn-primary" onClick={submitHandler}>
+                <Button 
+                    type="submit" 
+                    className="btn btn-primary" 
+                    onClick={() => eventHandler("submit")}
+                >
                     Submit
                     {waitingResponse ? 
                         <span className="spinner-border spinner-border-sm ml-2" role="status" aria-hidden="true"></span> 
                     : null}
                 </Button>
-                <Button onClick={closeHandler} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</Button>
+                <Button 
+                    onClick={() => eventHandler("close")} 
+                    type="button" 
+                    className="btn btn-secondary" 
+                    data-bs-dismiss="modal"
+                >
+                    Close
+                </Button>
             </Modal.Footer>
         </Modal>
     )
 
 }
 
-export default SpotAdd
+export default SpotModal
