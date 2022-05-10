@@ -3,9 +3,9 @@ const dotenv = require('dotenv')
 dotenv.config()
 
 module.exports = (req, res, next) => {
-    const token = req.headers.token
+    const token = req.cookies.token
     jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
-        if(err || decoded.name !== process.env.ADMIN_NAME) {
+        if(err || !decoded.admin) {
             res.sendStatus(403)
         }
         else {

@@ -3,6 +3,9 @@ const User = require("../../schema/User")
 const router = express.Router()
 const RouterError = require("../../helpers/routerError/routerError")
 const hasher = require("../../helpers/passwordHasher/passwordHasher")
+const jwt = require("jsonwebtoken")
+const dotenv = require('dotenv')
+dotenv.config()
 
 function validateEmail(email) {
     const regExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -17,57 +20,60 @@ function validatePassword(password) {
 
 module.exports = (database) => {
 
-    router.post("/api/register", (req, res) => {
-        const user = req.body
+    router.post("/api/register", async (req, res, next) => {
+        const request = req.body
 
-        Promise.all(
+        const promises = await Promise.all(
             [
                 database.getUser({
-                    name: user.username,
+                    name: request.username,
                 }), 
                 database.getUser({
-                    email: user.email
+                    email: request.email
                 })
             ]
         )
-        .then(promises => {
-            // User existence check
-            const allFailed = (promises[0] === null && promises[1] === null)
-            if (!allFailed) {
-                throw new RouterError(406, "This email or username already exists")
-            }
 
-            // Password validation
-            if(!validatePassword(user.password)) {
-                throw new RouterError(411, "Length of password must be more than 4")
-            }
+        // User existence check
+        const allFailed = (promises[0] === null && promises[1] === null)
+        if (!allFailed) {
+            return next(new RouterError(406, "This email or username already exists"))
+        }
 
-            // Email validation
-            if(!validateEmail(user.email)) {
-                throw new RouterError(406, "Invalid email address")
-            }
+        // Password validation
+        if(!validatePassword(request.password)) {
+            return next(new RouterError(411, "Length of password must be more than 4"))
+        }
 
+        // Email validation
+        if(!validateEmail(request.email)) {
+            return next(new RouterError(406, "Invalid email address"))
+        }
 
-            return hasher.hash(user.password)
+        const hashedPassword = await hasher.hash(request.password)
+        const newUser = new User({
+            name: request.username,
+            email: request.email,
+            password: hashedPassword
         })
-        .then(hashedPassword => {
-            const newUser = new User({
-                name: user.username,
-                email: user.email,
-                password: hashedPassword
-            })
-            return database.createUser(newUser)
+
+        const createdUser = await database.createUser(newUser)
+        const isAdmin = createdUser.name === process.env.ADMIN_NAME
+        const token = jwt.sign({ 
+            id: createdUser._id, 
+            name: createdUser.name, 
+            admin: isAdmin,
+        }, process.env.JWT_KEY)
+
+        res.status(201)
+        .cookie("token", token, {
+            httpOnly: true,
+            sameSite: "strict",
         })
-        .then(() => {
-            res.status(201).send({
-                success: true,
-            })
-        })
-        .catch(err => {
-            res.status(err.code).send({
-                success: false,
-                error: err.message 
-            })
+        .json({
+            success: true,
+            name: createdUser.name,
+            admin: isAdmin,
         })
     })
 

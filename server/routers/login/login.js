@@ -7,53 +7,49 @@ dotenv.config()
 const router = express.Router()
 
 module.exports = (database) => {
-    router.post("/api/login", (req, res) => {
-        const body = req.body
-        let id = null
-        let email = body.username
-        let username = body.username
-        const password = body.password
-    
-        database.getUser({
+    router.post("/api/login", async (req, res, next) => {
+        const request = {
+            ...req.body,
+            id: null
+        }
+
+        const user = await database.getUser({
             $or: [
                 {
-                    name: username
+                    name: request.username
                 },
                 {
-                    email: email
+                    email: request.email
                 }
             ]
         })
-        .then(result => {
-            if (!result) {
-                // User was not found in database
-                throw new RouterError(400, "Incorrect username (email) or pasword")
-            }
-            id = result._id
-            username = result.username
-            email = result.email
-            return hasher.compare(password, result.password)
+
+        if (!user) {
+            // User was not found in database
+            return next(new RouterError(400, "Incorrect username (email) or pasword"))
+        }
+
+        const passwordValidated = await hasher.compare(request.password, user.password)
+        if (!passwordValidated) {
+            // Incorrect password
+            return next(new RouterError(400, "Incorrect username (email) or pasword"))
+        }
+
+        const isAdmin = user.name === process.env.ADMIN_NAME
+        const token = jwt.sign({ 
+            id: user._id, 
+            name: user.name,
+            admin: isAdmin,
+        }, process.env.JWT_KEY)
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            sameSite: "strict",
         })
-        .then(result => {
-            res.status(200).send({
-                success: true,
-                token: jwt.sign({ id: id, name: username }, process.env.JWT_KEY)
-            })
-        })
-        .catch(err => { 
-            if (err instanceof RouterError) {
-                res.status(err.code).send({
-                    success: false,
-                    err: err.message
-                })
-            }
-            else {
-                console.log(err)
-                res.status(500).send({
-                    success: false,
-                    err: "Oops, looks like server is broken"
-                })
-            }
+        .send({
+            success: true,
+            name: user.name,
+            admin: isAdmin,
         })
     })
 

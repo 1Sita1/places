@@ -20,55 +20,61 @@ const AuthModal = ({ show, handleClose, setUser }) => {
     const handleAuth = (e) => {
         e.preventDefault()
 
-        if (mode == "register") {
-            const isEmpty = emailInput.value && loginInput.value && passwordInput.value && password2Input.value
-            console.log(isEmpty)
-            if (isEmpty) return
+        const options = {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                email: emailInput.value,
+                username: loginInput.value, 
+                password: passwordInput.value
+            })
+        }
 
+        if (mode == "register") {
+            const isEmpty = !(emailInput.value && loginInput.value && passwordInput.value && password2Input.value)
+            console.log(emailInput.value)
+            if (isEmpty) return
             if (passwordInput.value != password2Input.value) return
 
             setWaitingResponse(true)
-            const options = {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: {
-                    action: "register",
-                    email: emailInput.value,
-                    username: loginInput.value, 
-                    password: passwordInput.value
-                }
-            }
-
-            fetch("http://localhost:5000/api/auth", options)
-                .then(result => result.json())
-                .then(json => {
-                    console.log(json)
+        
+            console.log(options)
+            fetch("http://localhost:5000/api/register", options)
+            .then(result => result.json())
+            .then(json => {
+                console.log(json)
+                if(json.success) {
                     dismissRef.current.click()
                     setUser({
-                        name: "abobusS",
+                        name: json.username,
                     })
-                })
-                .catch(() => console.log("failed"))
-                .finally(() => setWaitingResponse(false))
+                }
+            })
+            .finally(() => setWaitingResponse(false))
         }
         else {
             if (!loginInput.value || !passwordInput.value) return
 
             setWaitingResponse(true)
 
-            fetch("http://localhost:5000/api/auth/test", {method: "POST"})
-                .then(result => result.json())
-                .then(json => {
-                    console.log(json)
+            fetch("http://localhost:5000/api/login", options)
+            .then(result => result.json())
+            .then(json => {
+                console.log(json)
+                if (json.success) {
                     dismissRef.current.click()
                     setUser({
-                        name: "abobusS",
+                        name: json.username,
                     })
-                })
-                .catch(() => console.log("failed"))
-                .finally(() => setWaitingResponse(false))
+                }
+                else {
+                    console.log("failed")
+                }
+            })
+            .finally(() => setWaitingResponse(false))
         }
     }
 
@@ -106,7 +112,7 @@ const AuthModal = ({ show, handleClose, setUser }) => {
                 <Modal.Title>{mode == "login" ? "Log in" : "Register"}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                {mode == "register"? <div className="form-group">
+                {mode == "register" ? <div className="form-group">
                     <label className="col-form-label">Email</label>
                     <input 
                         ref={emailInput.ref} 
@@ -114,7 +120,7 @@ const AuthModal = ({ show, handleClose, setUser }) => {
                         type="email" 
                         id="emailInput" 
                         aria-describedby="emailHelp" 
-                        onChange={emailRef.onChange} 
+                        onChange={emailInput.onChange} 
                         onKeyPress={onKeyUp} 
                         placeholder="name@example.com"
                         required>

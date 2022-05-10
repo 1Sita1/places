@@ -1,4 +1,5 @@
 const express = require('express')
+const RouterError = require('../../helpers/routerError/routerError.js')
 const Auth = require('../../middlewares/Auth/Auth.js')
 const SpamFilter = require('../../middlewares/SpamFilter/SpamFilter.js')
 const SuggestedPlace = require('../../schema/SuggestedPlace.js')
@@ -43,7 +44,7 @@ module.exports = (database) => {
     })
 
     
-    router.post("/api/markers", Auth, SpamFilter(database), (req, res) => {
+    router.post("/api/markers", Auth, SpamFilter(database), (req, res, next) => {
         const user = res.locals.user
         const suggested = req.body.marker
 
@@ -60,7 +61,7 @@ module.exports = (database) => {
             res.status(201).send(newPlace)
         })
         .catch(err => {
-            res.status(400).send(err)
+            next(new RouterError(400, "Failed to add new place"))
         })
     })
 

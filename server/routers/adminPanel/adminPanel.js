@@ -17,7 +17,6 @@ module.exports = (database) => {
                 places: result
             })
         })
-
     })
 
     router.delete("/api/admin/suggestedplaces", AdminAuth, (req, res) => {
@@ -30,60 +29,34 @@ module.exports = (database) => {
                 ...result
             })
         })
-        .catch(() => {
-            res.status(500).json({
-                success: false
-            })
-        })
-
     })
 
-    router.put("/api/admin/suggestedplaces", AdminAuth, (req, res) => {
+    router.put("/api/admin/suggestedplaces", AdminAuth, async (req, res) => {
         const params = req.query
 
-        database.getSuggestedPlaces(params.id)
-        .then(result => {
-            if (!result) throw new RouterError(404, "Place was not found")
-            result = result[0]
-            const id = result._id
-            delete result._id
+        const places = database.getSuggestedPlaces(params.id)
+        if (!places) return next(new RouterError(404, "Place was not found"))
 
-            const newPlace = new Place({
-                ...result,
-                rarity: params.rarity,
-                rating: {
-                    stars: [false, false, false, false, false],
-                    avg: 0,
-                    votes: 0,
-                }
-            })
+        const place = places[0]
+        const id = place._id
+        delete place._id
 
-            newPlace.save()
-            .then(result2 => {
-                database.rejectSuggestion(id)
-                .then(() => {
-                    res.send({
-                        success: true,
-                        ...result2
-                    })
-                })
-            })
-        })
-        .catch(err => {
-            if (err instanceof RouterError) {
-                res.status(err.status).json({
-                    success: false,
-                    message: err.message
-                })
-            }
-            else {
-                res.status(500).json({
-                    success: false,
-                    message: "Server error"
-                })
+        const newPlace = new Place({
+            ...place,
+            rarity: params.rarity,
+            rating: {
+                stars: [false, false, false, false, false],
+                avg: 0,
+                votes: 0,
             }
         })
 
+        const savingResult = await database.suggestPlace(newPlace)
+        const rejectionReult = await database.rejectSuggestion(id)
+        res.send({
+            success: true,
+            ...savingResult
+        })
     })
 
     return router
