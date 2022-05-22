@@ -12,7 +12,7 @@ module.exports = (database) => {
 
         database.getSuggestedPlaces(filter)
         .then(result => {
-            res.json({
+            res.json({ 
                 success: true,
                 places: result
             })
@@ -34,7 +34,7 @@ module.exports = (database) => {
     router.put("/api/admin/suggestedplaces", AdminAuth, async (req, res) => {
         const params = req.query
 
-        const places = database.getSuggestedPlaces(params.id)
+        const places = await database.getSuggestedPlaces(params.id)
         if (!places) return next(new RouterError(404, "Place was not found"))
 
         const place = places[0]
@@ -42,7 +42,7 @@ module.exports = (database) => {
         delete place._id
 
         const newPlace = new Place({
-            ...place,
+            ...place, 
             rarity: params.rarity,
             rating: {
                 stars: [false, false, false, false, false],
@@ -53,7 +53,7 @@ module.exports = (database) => {
 
         const savingResult = await database.suggestPlace(newPlace)
         const rejectionReult = await database.rejectSuggestion(id)
-        res.send({
+        res.json({
             success: true,
             ...savingResult
         })

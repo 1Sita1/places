@@ -1,8 +1,8 @@
 const request = require("supertest")
 const createApp = require("../../../app.js")
-const mockedDb = require("../../../helpers/dbhelper/dbhelper")
-jest.mock("../../../helpers/dbhelper/dbhelper")
 
+jest.mock("../../../helpers/dbhelper/dbhelper")
+const mockedDb = require("../../../helpers/dbhelper/dbhelper")
 const app = createApp(mockedDb)
 
 
@@ -13,6 +13,8 @@ beforeEach(() => {
 describe('Register tests', () => {
     describe('Email validation', () => {
         it("Rejects invalid email 1", async () => {
+            mockedDb.createUser.mockImplementationOnce(user => user)
+
             const response = await request(app)
                 .post('/api/register')
                 .send({
@@ -66,6 +68,13 @@ describe('Register tests', () => {
 
     describe("When user already exists", () => {
         it("fails correctly", async () => {
+            mockedDb.getUser.mockReturnValueOnce(Promise.resolve({
+                email: "test@gmail.com",
+                username: "test",
+                password: "XXX"
+            }))
+
+
             const response = await request(app)
                 .post('/api/register')
                 .send({
@@ -80,7 +89,8 @@ describe('Register tests', () => {
 
     describe("When everything is good", () => {
         it("Acceptes correct data", async () => {
-            mockedDb.getUser = jest.fn(() => Promise.resolve(null))
+            mockedDb.getUser.mockReturnValueOnce(Promise.resolve(null))
+            
             const response = await request(app)
                 .post('/api/register')
                 .send({

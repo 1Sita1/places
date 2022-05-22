@@ -1,8 +1,8 @@
 const request = require("supertest")
 const createApp = require("../../../app")
-const mockedDb = require("../../../helpers/dbhelper/dbhelper")
-jest.mock("../../../helpers/dbhelper/dbhelper")
 
+jest.mock("../../../helpers/dbhelper/dbhelper")
+const mockedDb = require("../../../helpers/dbhelper/dbhelper")
 const app = createApp(mockedDb)
 
 

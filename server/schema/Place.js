@@ -29,6 +29,10 @@ const Place = new mongoose.Schema({
         votes: {
             type: Number,
             required: true
+        },
+        votes_value: {
+            type: Number,
+            required: true
         }
     },
     header: {

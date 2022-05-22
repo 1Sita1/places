@@ -4,8 +4,6 @@ const router = express.Router()
 const RouterError = require("../../helpers/routerError/routerError")
 const hasher = require("../../helpers/passwordHasher/passwordHasher")
 const jwt = require("jsonwebtoken")
-const dotenv = require('dotenv')
-dotenv.config()
 
 function validateEmail(email) {
     const regExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -23,20 +21,18 @@ module.exports = (database) => {
     router.post("/api/register", async (req, res, next) => {
         const request = req.body
 
-        const promises = await Promise.all(
-            [
-                database.getUser({
-                    name: request.username,
-                }), 
-                database.getUser({
+        const user = await database.getUser({
+            $or: [
+                {
+                    name: request.username
+                },
+                {
                     email: request.email
-                })
+                }
             ]
-        )
+        })
 
-        // User existence check
-        const allFailed = (promises[0] === null && promises[1] === null)
-        if (!allFailed) {
+        if (user) {
             return next(new RouterError(406, "This email or username already exists"))
         }
 
@@ -54,7 +50,9 @@ module.exports = (database) => {
         const newUser = new User({
             name: request.username,
             email: request.email,
-            password: hashedPassword
+            password: hashedPassword,
+            votes: [],
+            favorites: [],
         })
 
         const createdUser = await database.createUser(newUser)

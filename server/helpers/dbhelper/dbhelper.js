@@ -3,15 +3,14 @@ const userSchema = require("../../schema/User")
 const PlaceSchema = require("../../schema/Place")
 const SuggestedPlaceSchema = require("../../schema/SuggestedPlace")
 
-const dbpass = process.env.DB_PASS
-const uri = `mongodb+srv://dbuser:${dbpass}@cluster.b3ptg.mongodb.net/app?retryWrites=true&w=majority`
-mongoose.connect(uri)
-.then(() => console.log("db connected"))
-.catch((e) => {
-    console.log(e)
-})
-
 module.exports = {
+
+    connect: async () => {
+        const dbpass = process.env.DB_PASS
+        const uri = `mongodb+srv://dbuser:${dbpass}@cluster.b3ptg.mongodb.net/app?retryWrites=true&w=majority`
+        const result = await mongoose.connect(uri)
+        return result
+    },
 
     createUser: async (user) => {
         const result = await user.save()
@@ -23,6 +22,16 @@ module.exports = {
         return result
     },
 
+    saveUser: async (place) => {
+        const result = await place.save()
+        return result
+    },
+
+    savePlace: async (user) => {
+        const result = await user.save()
+        return result
+    },
+
     suggestPlace: async (place) => {
         const result = await place.save()
         return result
@@ -30,6 +39,11 @@ module.exports = {
 
     getPlaces: async (filer) => {
         const result = await PlaceSchema.find(filer)
+        return result
+    },
+
+    getPlace: async (filer) => {
+        const result = await PlaceSchema.findOne(filer)
         return result
     },
 
@@ -47,4 +61,4 @@ module.exports = {
         const result = await PlaceSchema.save(place)
         return result
     },
-}
+} 

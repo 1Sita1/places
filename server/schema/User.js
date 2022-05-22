@@ -13,6 +13,14 @@ const User = new mongoose.Schema({
         type: String,
         required: true
     },
+    votes: {
+        type: Array,
+        required: true
+    },
+    favorites: {
+        type: Array,
+        required: true
+    }
 })
 
 module.exports = mongoose.model("User", User)

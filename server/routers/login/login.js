@@ -2,8 +2,6 @@ const express = require('express')
 const RouterError = require("../../helpers/routerError/routerError")
 const hasher = require("../../helpers/passwordHasher/passwordHasher")
 const jwt = require("jsonwebtoken")
-const dotenv = require('dotenv')
-dotenv.config()
 const router = express.Router()
 
 module.exports = (database) => {
