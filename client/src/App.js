@@ -1,9 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import Header from './components/header/Header';
+import Header from './components/Header/Header';
 import Map from './components/map/Map';
 import React, { useState, useEffect } from 'react';
 import { Toasts } from './components/Toasts/Toasts';
+
 
 function App() {
   const [user, setUser] = useState(null)

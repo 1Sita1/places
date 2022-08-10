@@ -1,23 +1,21 @@
 import { React, useState, useRef } from "react"
 import { Modal, Button } from 'react-bootstrap'
-import useInput from "../../hooks/useInput"
+import useInput from "../../../hooks/useInput"
 
-const AuthModal = ({ show, handleClose, setUser }) => {
+const RegisterModal = ({ show, handleClose, switchMode, setUser }) => {
 
-    const [mode, setMode] = useState("login")
     const emailInput = useInput("")
     const loginInput = useInput("")
     const passwordInput = useInput("")
     const password2Input = useInput("")
     const [waitingResponse, setWaitingResponse] = useState(false)
 
-    const emailRef = useRef(null)
     const submitRef = useRef(null)
     const dismissRef = useRef(null)
 
 
 
-    const handleAuth = (e) => {
+    const handleRegister = (e) => {
         e.preventDefault()
 
         const options = {
@@ -33,75 +31,38 @@ const AuthModal = ({ show, handleClose, setUser }) => {
             })
         }
 
-        if (mode == "register") {
-            const isEmpty = !(emailInput.value && loginInput.value && passwordInput.value && password2Input.value)
-            console.log(emailInput.value)
-            if (isEmpty) return
-            if (passwordInput.value != password2Input.value) return
+        const isEmpty = !(emailInput.value && loginInput.value && passwordInput.value && password2Input.value)
+        console.log(emailInput.value)
+        if (isEmpty) return
+        if (passwordInput.value != password2Input.value) return
 
-            setWaitingResponse(true)
-        
-            console.log(options)
-            fetch("http://localhost:5000/api/register", options)
-            .then(result => result.json())
-            .then(json => {
-                console.log(json)
-                if(json.success) {
-                    dismissRef.current.click()
-                    setUser({
-                        name: json.username,
-                    })
-                }
-            })
-            .finally(() => setWaitingResponse(false))
-        }
-        else {
-            if (!loginInput.value || !passwordInput.value) return
-
-            setWaitingResponse(true)
-
-            fetch("http://localhost:5000/api/login", options)
-            .then(result => result.json())
-            .then(json => {
-                console.log(json)
-                if (json.success) {
-                    dismissRef.current.click()
-                    setUser({
-                        name: json.username,
-                    })
-                }
-                else {
-                    console.log("failed")
-                }
-            })
-            .finally(() => setWaitingResponse(false))
-        }
-    }
-
-    const changeMode = () => {
-        setMode(mode => mode == "login" ? "register" : "login")
+        setWaitingResponse(true)
+    
+        console.log(options)
+        fetch("http://localhost:5000/api/register", options)
+        .then(result => result.json())
+        .then(json => {
+            console.log(json)
+            if(json.success) {
+                dismissRef.current.click()
+                setUser({
+                    name: json.username,
+                })
+            }
+        })
+        .finally(() => setWaitingResponse(false))
     }
 
     const onKeyUp = (e) => {
         if (e.key != "Enter") return
 
-        if (mode == "register") {
-            if (emailInput.value == "") emailInput.ref.current.focus()
-            else if (loginInput.value == "") loginInput.ref.current.focus()
-            else if (passwordInput.value == "") passwordInput.ref.current.focus()
-            else if (password2Input.value == "") password2Input.ref.current.focus()
-            else {
-                submitRef.current.click()
-                submitRef.current.focus()
-            }
-        }
+        if (emailInput.value == "") emailInput.ref.current.focus()
+        else if (loginInput.value == "") loginInput.ref.current.focus()
+        else if (passwordInput.value == "") passwordInput.ref.current.focus()
+        else if (password2Input.value == "") password2Input.ref.current.focus()
         else {
-            if (loginInput.value == "") loginInput.ref.current.focus()
-            else if (passwordInput.value == "") passwordInput.ref.current.focus()
-            else {
-                submitRef.current.click()
-                submitRef.current.focus()
-            }
+            submitRef.current.click()
+            submitRef.current.focus()
         }
     }
 
@@ -109,10 +70,10 @@ const AuthModal = ({ show, handleClose, setUser }) => {
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>{mode == "login" ? "Log in" : "Register"}</Modal.Title>
+                <Modal.Title>Register</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                {mode == "register" ? <div className="form-group">
+                <div className="form-group">
                     <label className="col-form-label">Email</label>
                     <input 
                         ref={emailInput.ref} 
@@ -125,7 +86,7 @@ const AuthModal = ({ show, handleClose, setUser }) => {
                         placeholder="name@example.com"
                         required>
                     </input>
-                </div> : null}
+                </div>
                 <div className="form-group">
                     <label className="col-form-label">Username</label>
                     <input 
@@ -152,7 +113,7 @@ const AuthModal = ({ show, handleClose, setUser }) => {
                         required>
                     </input>
                 </div>
-                {mode == "register"? <div className="form-group">
+                <div className="form-group">
                     <label className="col-form-label">Password again</label>
                     <input 
                         ref={password2Input.ref} 
@@ -165,12 +126,12 @@ const AuthModal = ({ show, handleClose, setUser }) => {
                         required>
                     </input>
                     <small className="text-danger">{passwordInput.value !== password2Input.value ? "Passwords do not match" : null}</small>
-                </div> : null}
+                </div>
             </Modal.Body>
             <Modal.Footer>
-                <small className="text-muted" onClick={changeMode} style={{"cursor" : "pointer"}}>{mode == "login" ? "Dont have an account?" : "Already registered?"}</small>
-                <Button ref={submitRef} type="submit" className="btn btn-primary" onClick={handleAuth}>
-                    {mode == "login" ? "Log in" : "Register"}
+                <small className="text-muted" style={{"cursor" : "pointer"}} onClick={switchMode}>Already registered?</small>
+                <Button ref={submitRef} type="submit" className="btn btn-primary" onClick={handleRegister}>
+                    <span>Register</span>
                     {waitingResponse ? <span className="spinner-border spinner-border-sm ml-2" role="status" aria-hidden="true"></span> : null}
                 </Button>
                 <Button ref={dismissRef} onClick={handleClose} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</Button>
@@ -179,4 +140,4 @@ const AuthModal = ({ show, handleClose, setUser }) => {
     )
 }
 
-export default AuthModal
+export default RegisterModal

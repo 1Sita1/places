@@ -4,14 +4,12 @@ import {
     useLoadScript,
     Marker,
     InfoWindow,
-    OverlayView,
-    InfoBox
 } from "@react-google-maps/api"
 import mapStyles from "./MapStyles";
 import "./Map.css"
 import InfoBar from "../InfoBar/InfoBar";
 import SpotModal from "../SpotModal/SpotModal";
-import AuthModal from "../AuthModal/AuthModal";
+import AuthModal from "../Modals/AuthModal/AuthModal";
 import { Button } from "react-bootstrap";
 
 const libraries = [
@@ -44,8 +42,8 @@ function Map({ user, setUser }){
     const [markers, setMarkers] = useState([])
     const [selected, setSelected] = useState(null)
     const [controlDialog, setControlDialog] = useState(null)
-    const [spotModal, setSpotModal] = useState(false)
     const [authModal, setAuthModal] = useState(false)
+    const [spotModal, setSpotModal] = useState(false)
     const [zoom, setZoom] = useState(defaultZoom)
 
     const mapRef = useRef()
@@ -54,9 +52,11 @@ function Map({ user, setUser }){
     }, [])
 
     useEffect(() => {
+        console.log(React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED)
         fetch("http://localhost:5000/api/markers")
             .then(result => result.json())
             .then(json => setMarkers(json))
+            .catch(err => console.error(err))
     }, [])
 
     const onMapClick = (event) => {
@@ -80,11 +80,9 @@ function Map({ user, setUser }){
         else {
             setAuthModal(true)
         }
-    }
+    } 
 
-    const authModalClose = () => {
-        setAuthModal(false)
-    }
+
 
     if (loadError) return "Error loading maps"
     if (!isLoaded) return "Loading maps"
@@ -176,11 +174,10 @@ function Map({ user, setUser }){
                 </InfoBar>) 
             : null }
 
-            <AuthModal 
-                show={authModal} 
-                user={user} 
+            <AuthModal
+                show={authModal}
+                handleClose={() => setAuthModal(false)}
                 setUser={setUser}
-                handleClose={authModalClose}
             >
             </AuthModal>
 
