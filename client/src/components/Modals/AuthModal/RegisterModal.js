@@ -45,9 +45,7 @@ const RegisterModal = ({ show, handleClose, switchMode, setUser }) => {
             console.log(json)
             if(json.success) {
                 dismissRef.current.click()
-                setUser({
-                    name: json.username,
-                })
+                setUser(json.user)
             }
         })
         .finally(() => setWaitingResponse(false))

@@ -70,8 +70,10 @@ module.exports = (database) => {
         })
         .json({
             success: true,
-            name: createdUser.name,
-            admin: isAdmin,
+            user: {
+                name: createdUser.name,
+                admin: isAdmin,
+            }
         })
     })
 

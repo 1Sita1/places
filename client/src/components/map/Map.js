@@ -8,7 +8,7 @@ import {
 import mapStyles from "./MapStyles";
 import "./Map.css"
 import InfoBar from "../InfoBar/InfoBar";
-import SpotModal from "../SpotModal/SpotModal";
+import SpotModal from "../Modals/SpotModal/SpotModal";
 import AuthModal from "../Modals/AuthModal/AuthModal";
 import { Button } from "react-bootstrap";
 
