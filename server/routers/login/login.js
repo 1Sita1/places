@@ -46,8 +46,10 @@ module.exports = (database) => {
         })
         .send({
             success: true,
-            name: user.name,
-            admin: isAdmin,
+            user: {
+                name: user.name,
+                admin: isAdmin,
+            }
         })
     })
 

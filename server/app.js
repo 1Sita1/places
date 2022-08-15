@@ -8,7 +8,7 @@ dotenv.config()
 const whitelist = process.env.NODE_ENV == "test" ? ['http://localhost:3000', 'http://localhost:5000', undefined, "chrome-extension://gmmkjpcadciiokjpikmkkmapphbmdjok"] : null
 console.log(process.env.NODE_ENV )
 const corsOptions = { 
-    origin: (origin, callback) => {
+    origin: (origin, callback) => { 
         if (whitelist.includes(origin)) callback(null, true)
         else callback(new Error('Not allowed by CORS'))
     },
@@ -17,6 +17,8 @@ const corsOptions = {
 
 module.exports = (database) => {
     database.connect()
+    .then(() => console.log("db connected"))
+    .catch(err => console.error(err)) 
     const app = express()
     
     app.use(express.json()) 

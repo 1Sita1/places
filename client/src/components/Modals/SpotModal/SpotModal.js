@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react"
 import { Modal, Button } from 'react-bootstrap'
-import useInput from "../../hooks/useInput"
-import InfoBar from "../InfoBar/InfoBar"
+import useInput from "../../../hooks/useInput"
+import InfoBar from "../../InfoBar/InfoBar"
 import "./SpotModal.css"
 
 const SpotModal = (props) => {

@@ -3,17 +3,38 @@ import './App.css';
 import Header from './components/Header/Header';
 import Map from './components/map/Map';
 import React, { useState, useEffect } from 'react';
-import { Toasts } from './components/Toasts/Toasts';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function App() {
   const [user, setUser] = useState(null)
 
+  toast.info('🦄 Wow so easy!', {
+    position: "bottom-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  });
+
   return (
     <div className="App">
         <Header user={user} setUser={setUser} />
         <Map user={user} setUser={setUser} />
-        <Toasts />
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
     </div>
   );
 }

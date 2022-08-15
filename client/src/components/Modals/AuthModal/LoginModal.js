@@ -39,9 +39,7 @@ const LoginModal = ({ show, handleClose, switchMode, setUser }) => {
             console.log(json)
             if (json.success) {
                 dismissRef.current.click()
-                setUser({
-                    name: json.username,
-                })
+                setUser(json.user)
             }
             else {
                 console.log("failed")
