@@ -7,7 +7,7 @@ const Place = require('../../schema/Place')
 
 module.exports = (database) => {
 
-    router.get("/api/admin/suggestedplaces", AdminAuth, (req, res) => {
+    router.get("/suggestedplaces", AdminAuth, (req, res) => {
         const filter = req.query
 
         database.getSuggestedPlaces(filter)
@@ -19,7 +19,7 @@ module.exports = (database) => {
         })
     })
 
-    router.delete("/api/admin/suggestedplaces", AdminAuth, (req, res) => {
+    router.delete("/suggestedplaces", AdminAuth, (req, res) => {
         const params = req.query
 
         database.rejectSuggestion(params.id)
@@ -31,7 +31,7 @@ module.exports = (database) => {
         })
     })
 
-    router.put("/api/admin/suggestedplaces", AdminAuth, async (req, res) => {
+    router.put("/suggestedplaces", AdminAuth, async (req, res) => {
         const params = req.query
 
         const places = await database.getSuggestedPlaces(params.id)

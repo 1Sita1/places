@@ -4,6 +4,7 @@ import useInput from "../../../hooks/useInput"
 import InfoBar from "../../InfoBar/InfoBar"
 import "./SpotModal.css"
 
+
 const SpotModal = (props) => {
 
     const [waitingResponse, setWaitingResponse] = useState(false)
@@ -24,13 +25,28 @@ const SpotModal = (props) => {
 
             case "submit": 
                 setWaitingResponse(true)
-                const request = {
-                    position: props.position,
-                    header: headerInput.value,
-                    image: img,
-                    description: descInput.value
+
+                const options = {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        location: props.position,
+                        header: headerInput.value,
+                        img: img,
+                        body: descInput.value
+                    })
                 }
-                console.log(request)
+
+                fetch(`${ process.env.REACT_APP_HOST }/api/markers`, options)
+                .then(result => result.json())
+                .then(json => {
+                    console.log(json)
+                })
+                .catch(err => console.log(err))
+                .finally(() => setWaitingResponse(false))
             break;
 
             case "close":

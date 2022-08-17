@@ -39,7 +39,7 @@ const RegisterModal = ({ show, handleClose, switchMode, setUser }) => {
         setWaitingResponse(true)
     
         console.log(options)
-        fetch("http://localhost:5000/api/register", options)
+        fetch(`${ process.env.REACT_APP_HOST }/api/register`, options)
         .then(result => result.json())
         .then(json => {
             console.log(json)

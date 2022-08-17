@@ -8,7 +8,7 @@ const router = express.Router()
 
 module.exports = (database) => {
 
-    router.get("/api/markers", (req, res) => {
+    router.get("/markers", (req, res) => {
         const params = req.query
 
         switch(params.type) {
@@ -43,15 +43,15 @@ module.exports = (database) => {
     })
 
     
-    router.post("/api/markers", Auth, SpamFilter(database), (req, res, next) => {
+    router.post("/markers", Auth, SpamFilter(database), (req, res, next) => {
         const user = res.locals.user
-        const suggested = req.body.marker
-
+        const suggested = req.body
+        console.log(suggested)
         const newPlace = new SuggestedPlace({
             ...suggested,
             created: {
                 by: user.name,
-                at: Date.now() / 1000
+                at: ~~(Date.now() / 1000)
             }
         })
 
@@ -60,11 +60,12 @@ module.exports = (database) => {
             res.status(201).send(newPlace)
         })
         .catch(err => {
+            console.log(err.message) 
             next(new RouterError(400, "Failed to add new place"))
         })
     })
 
-    router.put("/api/markers", Auth, async (req, res, next) => {
+    router.put("/markers", Auth, async (req, res, next) => {
         const requestedUser = res.locals.user
         const params = req.query
 

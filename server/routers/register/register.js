@@ -2,6 +2,7 @@ const express = require('express')
 const User = require("../../schema/User")
 const router = express.Router()
 const RouterError = require("../../helpers/routerError/routerError")
+const sanitizeUser = require("../../helpers/userSanitizer/sanitizeUser")
 const hasher = require("../../helpers/passwordHasher/passwordHasher")
 const jwt = require("jsonwebtoken")
 
@@ -18,7 +19,7 @@ function validatePassword(password) {
 
 module.exports = (database) => {
 
-    router.post("/api/register", async (req, res, next) => {
+    router.post("/register", async (req, res, next) => {
         const request = req.body
 
         const user = await database.getUser({
@@ -56,12 +57,10 @@ module.exports = (database) => {
         })
 
         const createdUser = await database.createUser(newUser)
-        const isAdmin = createdUser.name === process.env.ADMIN_NAME
-        const token = jwt.sign({ 
-            id: createdUser._id, 
-            name: createdUser.name, 
-            admin: isAdmin,
-        }, process.env.JWT_KEY)
+
+        const sanitizedUser = sanitizeUser(createdUser)
+
+        const token = jwt.sign(sanitizedUser, process.env.JWT_KEY)
 
         res.status(201)
         .cookie("token", token, {
@@ -70,10 +69,7 @@ module.exports = (database) => {
         })
         .json({
             success: true,
-            user: {
-                name: createdUser.name,
-                admin: isAdmin,
-            }
+            user: sanitizedUser
         })
     })
 

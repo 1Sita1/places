@@ -5,7 +5,7 @@ const Auth = require("../../middlewares/Auth/Auth")
 
 module.exports = (database) => {
 
-    router.get("/api/user", Auth, async (req, res, next) => {
+    router.get("/user", Auth, async (req, res, next) => {
         const locals = res.locals
         const user = await database.getUser({ name: locals.user.name })
 
@@ -20,7 +20,7 @@ module.exports = (database) => {
         })
     })
 
-    router.get("/api/user/favorites", Auth, async (req, res, next) => {
+    router.get("/user/favorites", Auth, async (req, res, next) => {
         const locals = res.locals
         const user = await database.getUser({ name: locals.user.name })
 
@@ -30,7 +30,7 @@ module.exports = (database) => {
         })
     })
 
-    router.post("/api/user/favorites", Auth, async (req, res, next) => {
+    router.post("/user/favorites", Auth, async (req, res, next) => {
         const locals = res.locals
         const user = await database.getUser({ name: locals.user.name })
         const place = await database.getPlace({ _id: req.body._id })
@@ -45,7 +45,7 @@ module.exports = (database) => {
         })
     })
 
-    router.delete("/api/user/favorites/:id", Auth, async (req, res, next) => {
+    router.delete("/user/favorites/:id", Auth, async (req, res, next) => {
         const locals = res.locals
         const user = await database.getUser({ name: locals.user.name })
 

@@ -1,13 +1,15 @@
 const mongoose = require("mongoose")
 
 const Place = new mongoose.Schema({
-    lat: {
-        type: Number,
-        required: true
-    },
-    lng: {
-        type: Number,
-        required: true
+    location: {
+        lat: {
+            type: Number,
+            required: true
+        },
+        lng: {
+            type: Number,
+            required: true
+        }
     },
     img: {
         type: String,
@@ -48,7 +50,7 @@ const Place = new mongoose.Schema({
             type: String,
             required: true
         },
-        date: {
+        at: {
             type: Number,
             default: Date.now() / 1000,
         }

@@ -1,11 +1,12 @@
 const express = require('express')
 const RouterError = require("../../helpers/routerError/routerError")
+const sanitizeUser = require("../../helpers/userSanitizer/sanitizeUser")
 const hasher = require("../../helpers/passwordHasher/passwordHasher")
 const jwt = require("jsonwebtoken")
 const router = express.Router()
 
 module.exports = (database) => {
-    router.post("/api/login", async (req, res, next) => {
+    router.post("/login", async (req, res, next) => {
         const request = {
             ...req.body,
             id: null
@@ -33,12 +34,10 @@ module.exports = (database) => {
             return next(new RouterError(400, "Incorrect username (email) or pasword"))
         }
 
-        const isAdmin = user.name === process.env.ADMIN_NAME
-        const token = jwt.sign({ 
-            id: user._id, 
-            name: user.name,
-            admin: isAdmin,
-        }, process.env.JWT_KEY)
+        const sanitizedUser = sanitizeUser(user)
+
+
+        const token = jwt.sign(sanitizedUser, process.env.JWT_KEY)
 
         res.cookie("token", token, {
             httpOnly: true,
@@ -46,10 +45,7 @@ module.exports = (database) => {
         })
         .send({
             success: true,
-            user: {
-                name: user.name,
-                admin: isAdmin,
-            }
+            user: sanitizedUser 
         })
     })
 

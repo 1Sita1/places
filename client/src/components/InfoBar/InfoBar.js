@@ -1,39 +1,58 @@
 import React from 'react'
+import { Button } from 'react-bootstrap';
 import { useEffect, useState } from 'react/cjs/react.production.min';
 import "./InfoBar.css";
 
 
-const dragStart = (props) => {
-  alert()
-}
+function InfoBar(data) {
 
-function InfoBar({ img, rating,  header, children, created, onCloseClick, style }) {
 
-  return (
-    <div className='infoBar' style={style ?? null}>
-        <div className='imgWrap'><img className='InfoBarImg' height="100" width="100" src={img}></img></div>
-        <div className='ratingWrapper'>
-          <span className='placeVotes'>{ rating.votes } votes</span>
-          <div className='starsWrapper'>
-            { rating.stars.map((star, id) => {
-              return <img src={ star ? 'star.png' : 'starTemplate.png' } key={id}></img>
-            }) }
-          </div>
+    return (
+        <div className='infoBar' style={ data.style }>
+            <div className='imgWrap'>
+                <img className='InfoBarImg' height="100" width="100" src={ data?.img }></img>
+            </div>
+            <div className='ratingWrapper'>
+                <span className='placeVotes'>
+                    { data.rating ? data.rating.votes : 0 } votes
+                </span>
+                <div className='starsWrapper'>
+                    { 
+                        data?.rating && data.rating.stars.map((star, id) => {
+                            return <img src={ star ? 'star.png' : 'starTemplate.png' } key={id}></img>
+                        }) 
+                    }
+                </div>
+            </div>
+            <div className='infoBarInfo'>
+                <div className='topPart'>
+                    <h2 className='infoBarHeader'>{ data?.header }</h2>
+                    <p className='infoBarBody' style={{whiteSpace: "pre-line"}}>
+                        { data?.children ?? "Lorem ipsum..." }
+                    </p>
+                </div>
+                { 
+                    data?.user?.isAdmin ? (
+                        <>
+                            <Button>Approve</Button>
+                            <Button>Decline</Button>
+                        </>
+                    ) : null
+                }
+                <div className='bottomPart pb-3'>
+                    <small className="text-muted">
+                        Created by { data?.created.by }
+                    </small>
+                    <br></br>
+                    <small className="text-muted">
+                        { data?.created.at }
+                    </small>
+                </div>
+            </div>
+            
+            <div className='infoBarClose' onClick={() => data.onCloseClick()}></div>
         </div>
-        <div className='infoBarInfo'>
-          <div className='topPart'>
-            <h2 className='infoBarHeader'>{ header }</h2>
-            <p className='infoBarBody' style={{whiteSpace: "pre-line"}}>{children ?? "Lorem ipsum..."}</p>
-          </div>
-          <div className='bottomPart pb-3'>
-            <small className="text-muted">Created by { created.by }</small>
-            <br></br>
-            <small className="text-muted">{ created.date }</small>
-          </div>
-        </div>
-        <div className='infoBarClose' onClick={() => onCloseClick()}></div>
-    </div>
-  )
+    )
 }
 
 export default InfoBar

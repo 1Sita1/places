@@ -40,6 +40,7 @@ function Map({ user, setUser }){
     })
 
     const [markers, setMarkers] = useState([])
+    const [suggestedMarkers, setSuggestedMarkers] = useState([])
     const [selected, setSelected] = useState(null)
     const [controlDialog, setControlDialog] = useState(null)
     const [authModal, setAuthModal] = useState(false)
@@ -52,12 +53,17 @@ function Map({ user, setUser }){
     }, [])
 
     useEffect(() => {
-        console.log(React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED)
-        fetch("http://localhost:5000/api/markers")
-            .then(result => result.json())
-            .then(json => setMarkers(json))
-            .catch(err => console.error(err))
-    }, [])
+        fetch(`${ process.env.REACT_APP_HOST }/api/markers`)
+        .then(result => result.json())
+        .then(json => setMarkers(json))
+        .catch(err => console.error(err))
+
+        fetch(`${ process.env.REACT_APP_HOST }/api/admin/suggestedplaces`,
+        { credentials: "include" })
+        .then(result => result.json())
+        .then(json => setSuggestedMarkers(json.places))
+        .catch(err => console.error(err))
+    }, [user])
 
     const onMapClick = (event) => {
         setSelected(null)
@@ -107,8 +113,8 @@ function Map({ user, setUser }){
 
                         return (
                             <Marker 
-                                key={marker.time} 
-                                position={{lat: marker.lat, lng: marker.lng}}
+                                key={marker._id} 
+                                position={{lat: marker.location.lat, lng: marker.location.lng}}
                                 icon={{
                                     url: "markers/" + marker.rarity + "Marker.svg",
                                     scaledSize: new window.google.maps.Size(30, 30),
@@ -119,6 +125,24 @@ function Map({ user, setUser }){
                             />
                         )
                     }) 
+                }
+
+                {
+                    suggestedMarkers.map(marker => {
+                        return (
+                            <Marker 
+                                key={marker._id} 
+                                position={{lat: marker.location.lat, lng: marker.location.lng}}
+                                icon={{
+                                    url: "markers/suggestedMarker.png",
+                                    scaledSize: new window.google.maps.Size(30, 30),
+                                    origin: new window.google.maps.Point(0, 0),
+                                    anchor: new window.google.maps.Point(15, 20),
+                                }}
+                                onClick={() => {setSelected(null); setSelected(marker)}}
+                            />
+                        )
+                    })
                 }
 
                 { controlDialog ? 
@@ -133,11 +157,12 @@ function Map({ user, setUser }){
 
             { selected !== null ? (
                 <InfoBar
-                    header={selected.rarity}
+                    header={selected.header}
                     img={selected.img}
                     rating={selected.rating}
                     created={selected.created}
                     onCloseClick={() => setSelected(null)}
+                    user={user}
                 >
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
                     In venenatis lorem vel faucibus sagittis. Aenean condimentum vel velit ac porta. 

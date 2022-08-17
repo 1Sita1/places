@@ -33,7 +33,7 @@ const LoginModal = ({ show, handleClose, switchMode, setUser }) => {
 
         setWaitingResponse(true)
 
-        fetch("http://localhost:5000/api/login", options)
+        fetch(`${ process.env.REACT_APP_HOST }/api/login`, options)
         .then(result => result.json())
         .then(json => {
             console.log(json)

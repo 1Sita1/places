@@ -1,13 +1,15 @@
 const mongoose = require("mongoose")
 
 const Place = new mongoose.Schema({
-    lat: {
-        type: Number,
-        required: true
-    },
-    lng: {
-        type: Number,
-        required: true
+    location: {
+        lat: {
+            type: Number,
+            required: true
+        },
+        lng: {
+            type: Number,
+            required: true
+        }
     },
     img: {
         type: String,
@@ -20,6 +22,24 @@ const Place = new mongoose.Schema({
     body: {
         type: String,
         required: true
+    },
+    rating: {
+        stars: {
+            type: [Boolean],
+            default: [false, false, false, false, false]
+        },
+        avg: {
+            type: Number,
+            default: 0
+        },
+        votes: {
+            type: Number,
+            default: 0
+        },
+        votes_value: {
+            type: Number,
+            default: 0
+        }
     },
     created: {
         by: {
