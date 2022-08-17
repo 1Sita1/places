@@ -34,7 +34,7 @@ function Header({user, setUser}) {
                             setUser={setUser}
                         >
                         </AuthModal>
-                        
+                         
                     </span>
                 </div>
             </div>
