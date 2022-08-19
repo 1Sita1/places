@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const RouterError = require("../../helpers/routerError/routerError")
+const sanitizeUser = require("../../helpers/userSanitizer/sanitizeUser")
 const Auth = require("../../middlewares/Auth/Auth")
 
 module.exports = (database) => {
@@ -9,14 +10,9 @@ module.exports = (database) => {
         const locals = res.locals
         const user = await database.getUser({ name: locals.user.name })
 
-        delete user._id
-        delete user.password
-
         res.json({
             success: true,
-            user: {
-                ...user
-            }
+            user: sanitizeUser(user)
         })
     })
 
@@ -26,7 +22,7 @@ module.exports = (database) => {
 
         res.json({
             success: true,
-            favorites: user.favorites
+            favorites: sanitizeUser(user).favorites
         })
     })
 

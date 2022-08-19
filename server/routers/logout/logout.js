@@ -1,6 +1,5 @@
 const express = require('express')
 const RouterError = require("../../helpers/routerError/routerError")
-const jwt = require("jsonwebtoken")
 const router = express.Router()
 
 module.exports = (database) => {

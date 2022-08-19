@@ -4,6 +4,35 @@ const Auth = require('../../middlewares/Auth/Auth.js')
 const SpamFilter = require('../../middlewares/SpamFilter/SpamFilter.js')
 const SuggestedPlace = require('../../schema/SuggestedPlace.js')
 const router = express.Router()
+const multer = require('multer')
+const path = require('path')
+const fs = require('fs')
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, process.env.IMG_PATH)
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname))
+    }
+})
+
+const upload = multer({ 
+    storage: storage,
+    fileFilter: function(_req, file, cb){
+        const filetypes = /jpeg|jpg|png|gif/;
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = filetypes.test(file.mimetype);
+
+        if(mimetype && extname){
+            return cb(null,true);
+        } else {
+            _req.fileValidationError = "Forbidden image extension";
+            cb(null, false, _req.fileValidationError);
+        }
+    }
+}).single("place-img")
 
 
 module.exports = (database) => {
@@ -43,12 +72,19 @@ module.exports = (database) => {
     })
 
     
-    router.post("/markers", Auth, SpamFilter(database), (req, res, next) => {
+    router.post("/markers", Auth, SpamFilter(database), upload, (req, res, next) => {
+        if (req.fileValidationError) {
+            next(new RouterError(400, "Image validation error"))
+            return
+        }
+
         const user = res.locals.user
         const suggested = req.body
-        console.log(suggested)
+
         const newPlace = new SuggestedPlace({
             ...suggested,
+            img: req.file.filename,
+            location: JSON.parse(suggested.location),
             created: {
                 by: user.name,
                 at: ~~(Date.now() / 1000)
@@ -61,7 +97,11 @@ module.exports = (database) => {
         })
         .catch(err => {
             console.log(err.message) 
-            next(new RouterError(400, "Failed to add new place"))
+            fs.unlink(process.env.IMG_PATH + req.file.filename, (err) => {
+                if (err) console.log(err)
+                else console.log("file deleted")
+                next(new RouterError(400, "Failed to add new place"))
+            })
         })
     })
 

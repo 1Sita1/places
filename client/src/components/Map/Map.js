@@ -59,10 +59,10 @@ function Map({ user, setUser }){
         .catch(err => console.error(err))
 
         fetch(`${ process.env.REACT_APP_HOST }/api/admin/suggestedplaces`,
-        { credentials: "include" })
+        { credentials: "include", })
         .then(result => result.json())
         .then(json => setSuggestedMarkers(json.places))
-        .catch(err => console.error(err))
+        .catch(err => setSuggestedMarkers([]))
     }, [user])
 
     const onMapClick = (event) => {
@@ -158,7 +158,7 @@ function Map({ user, setUser }){
             { selected !== null ? (
                 <InfoBar
                     header={selected.header}
-                    img={selected.img}
+                    img={ process.env.REACT_APP_HOST + '/uploads/' + selected.img }
                     rating={selected.rating}
                     created={selected.created}
                     onCloseClick={() => setSelected(null)}
