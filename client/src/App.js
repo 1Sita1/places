@@ -20,6 +20,16 @@ function App() {
     progress: undefined,
   });
 
+  useEffect(() => {
+    fetch(`${ process.env.REACT_APP_HOST }/api/user`, {
+      credentials: "include"
+    })
+    .then(data => data.json())
+    .then(json => {
+      setUser(json.user)
+    })
+  }, [])
+
   return (
     <div className="App">
         <Header user={user} setUser={setUser} />

@@ -26,6 +26,7 @@ module.exports = (database) => {
     app.use(express.json()) 
     app.use(cors(corsOptions))
     app.use(cookieParser())
+    app.use(express.static('public'))
     
     // Routers
     const user = require("./routers/user/user.js")(database)

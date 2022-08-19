@@ -3,9 +3,13 @@ import { Button } from 'react-bootstrap';
 import { useEffect, useState } from 'react/cjs/react.production.min';
 import "./InfoBar.css";
 
+function unixToDate(unix) {
+    const date = new Date(unix * 1000).toLocaleDateString("fi")
+    return  date
+}
+
 
 function InfoBar(data) {
-
 
     return (
         <div className='infoBar' style={ data.style }>
@@ -31,23 +35,23 @@ function InfoBar(data) {
                         { data?.children ?? "Lorem ipsum..." }
                     </p>
                 </div>
-                { 
-                    data?.user?.isAdmin ? (
-                        <>
-                            <Button>Approve</Button>
-                            <Button>Decline</Button>
-                        </>
-                    ) : null
-                }
                 <div className='bottomPart pb-3'>
                     <small className="text-muted">
                         Created by { data?.created.by }
                     </small>
                     <br></br>
                     <small className="text-muted">
-                        { data?.created.at }
+                        { unixToDate(data.created.at) }
                     </small>
                 </div>
+                { 
+                    data?.user?.isAdmin ? (
+                        <div className='d-flex justify-content-between p-5'>
+                            <Button variant='success'>Approve</Button>
+                            <Button variant='danger'>Decline</Button>
+                        </div>
+                    ) : null
+                }
             </div>
             
             <div className='infoBarClose' onClick={() => data.onCloseClick()}></div>

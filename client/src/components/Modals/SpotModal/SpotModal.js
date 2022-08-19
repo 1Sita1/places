@@ -9,35 +9,28 @@ const SpotModal = (props) => {
 
     const [waitingResponse, setWaitingResponse] = useState(false)
     const [img, setImg] = useState("yes.gif")
+    const [imgForUpload, setImgForUpload] = useState(null)
     const headerInput = useInput("Example header")
     const descInput = useInput("Wasaaaap wasassaaaaaap")
 
     const filesRef = useRef(null)
-
-    let today = new Date()
-    const dd = String(today.getDate()).padStart(2, '0')
-    const mm = String(today.getMonth() + 1).padStart(2, '0')
-    const yyyy = today.getFullYear()
-    today = dd + '.' + mm + '.' + yyyy;
 
     const eventHandler = (event, ...rest) => {
         switch(event) {
 
             case "submit": 
                 setWaitingResponse(true)
+                console.log(props)
+                const formData = new FormData()
+                formData.append("location", JSON.stringify(props.position))
+                formData.append("header", headerInput.value)
+                formData.append("place-img", imgForUpload)
+                formData.append("body", descInput.value)
 
                 const options = {
                     method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
                     credentials: 'include',
-                    body: JSON.stringify({
-                        location: props.position,
-                        header: headerInput.value,
-                        img: img,
-                        body: descInput.value
-                    })
+                    body: formData
                 }
 
                 fetch(`${ process.env.REACT_APP_HOST }/api/markers`, options)
@@ -54,6 +47,7 @@ const SpotModal = (props) => {
             break;
 
             case "fileUpload":
+                setImgForUpload(rest[0])
                 const reader  = new FileReader();
                 reader.readAsDataURL(rest[0]);
                 reader.onloadend = (progEvent) => {
@@ -106,14 +100,14 @@ const SpotModal = (props) => {
                     style={{display: "flex", justifyContent: "center", backgroundColor: "var(--bs-gray-800)"}}
                 >
                     <InfoBar 
-                        img={img} 
+                        img={ img } 
                         header={headerInput.value} 
                         rating={{
                             votes: 0,
                             stars: new Array(5).fill(false)
                         }} 
                         created={{
-                            date: today,
+                            at: Date.now() / 1000,
                             by: props.user ? props.user.name : "UNKNOWN"
                         }} 
                         style={{position: "static", transform: "scale(0.8)"}}

@@ -7,7 +7,11 @@ function Header({user, setUser}) {
     const [authModal, setAuthModal] = useState(false) 
 
     const handleLogout = (e) => {
-        setUser(null)
+        fetch(`${ process.env.REACT_APP_HOST }/api/logout`, {
+            method: "POST",
+            credentials: "include"
+        })
+        .then(() => setUser(null))
     }    
 
     return(
@@ -17,15 +21,16 @@ function Header({user, setUser}) {
                     <span className='navbar-brand h2' style={{cursor: "default"}}>MP</span>
                     <span>
 
-                        { user ? 
-                            <span style={{display: "flex", alignItems: "center"}}>
-                                <h5 style={{marginRight: "15px"}}>{user.name}</h5> 
-                                <Button variant="outline-danger" size="sm" onClick={handleLogout}>Log out</Button>
-                            </span>
-                        :
-                            <Button variant="primary" onClick={() => setAuthModal(true)}>
-                                Log in
-                            </Button>
+                        { 
+                            user ? 
+                                <span style={{display: "flex", alignItems: "center"}}>
+                                    <h5 style={{marginRight: "15px"}}>{ user.name }</h5> 
+                                    <Button variant="outline-danger" size="sm" onClick={handleLogout}>Log out</Button>
+                                </span>
+                            :
+                                <Button variant="primary" onClick={() => setAuthModal(true)}>
+                                    Log in
+                                </Button>
                         }
 
                         <AuthModal
