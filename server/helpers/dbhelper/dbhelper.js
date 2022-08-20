@@ -52,13 +52,18 @@ module.exports = {
         return result
     },
 
-    rejectSuggestion: async (id) => {
+    getSuggestedPlace: async (filter) => {
+        const result = await SuggestedPlaceSchema.findOne(filter)
+        return result
+    },
+
+    deleteSuggestion: async (id) => {
         const result = await SuggestedPlaceSchema.deleteOne({_id: id})
         return result
     },
 
     acceptSuggestion: async (place) => {
-        const result = await PlaceSchema.save(place)
+        const result = await place.save(place)
         return result
     },
 } 

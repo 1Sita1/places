@@ -87,3 +87,16 @@
     z-index: 2000;
   }
 }
+
+.infoBar-rarityIcon > img {
+  width: 32px;
+  height: auto;
+  cursor: pointer;
+}
+
+.infoBar-rarityIcon-selected {
+  background-color: #5cb85c;
+  border-radius: 100%;
+  padding: 10px;
+  transition: background-color 0.2s;
+}

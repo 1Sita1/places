@@ -161,41 +161,11 @@ function Map({ user, setUser }){
                     img={ process.env.REACT_APP_HOST + '/uploads/' + selected.img }
                     rating={selected.rating}
                     created={selected.created}
+                    body={selected.body}
+                    id={selected._id}
                     onCloseClick={() => setSelected(null)}
                     user={user}
-                >
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                    In venenatis lorem vel faucibus sagittis. Aenean condimentum vel velit ac porta. 
-                    Maecenas malesuada erat nec tellus mollis volutpat. Praesent convallis a nibh in finibus. 
-                    Maecenas ex nibh, rutrum vitae sagittis at, feugiat eget sem. 
-                    Vivamus nec maximus eros. Mauris vel molestie nisl. 
-                    Integer vitae odio viverra, sollicitudin tortor id, semper eros.
-                    Aenean pulvinar sit amet ex a faucibus. Nulla aliquet vestibulum enim. 
-                    Curabitur vel dignissim nisl, in convallis nulla.
-                    <br></br>
-                    <br></br>
-                    Etiam vestibulum ullamcorper nisl. 
-                    Nam sit amet nisi rutrum, pulvinar ipsum ut, sagittis eros. 
-                    Donec hendrerit libero nec sollicitudin dictum. 
-                    Praesent tellus risus, ultrices vitae euismod et, dictum non quam.
-                    Donec pretium arcu ut magna rhoncus elementum. 
-                    Aliquam eget eros sed leo pellentesque rhoncus vel eget est. 
-                    Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
-                    Donec laoreet cursus aliquet. Curabitur non tellus sed velit maximus tincidunt. 
-                    Phasellus ac dolor vulputate, tincidunt elit id, lacinia augue.
-                    <br></br>
-                    <br></br>
-                    Praesent pulvinar, metus at maximus condimentum, lacus massa facilisis mauris, non laoreet risus velit et quam. 
-                    Morbi aliquam euismod urna ut pharetra.
-                    Quisque ac dui maximus, lacinia libero et, imperdiet nibh. Donec efficitur orci neque, ut sagittis velit sagittis sed. 
-                    Morbi ut pharetra dui, eu pellentesque sapien. Fusce a turpis ac sem dictum porta. 
-                    Vestibulum consequat justo ut odio hendrerit, id mattis erat sagittis.
-                    Nam quam purus, tristique nec tincidunt a, aliquam mattis odio. 
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                    Maecenas viverra tellus vel justo sagittis, ut condimentum nunc efficitur. Suspendisse vitae nisl neque. 
-                    Praesent commodo fermentum luctus. Pellentesque a neque quis purus lacinia ullamcorper non ut mi. 
-                    Nunc purus massa, sodales non aliquet sed, tempor interdum lacus. 
-                    Duis quis ante vehicula, sodales lorem sit amet, ullamcorper tortor.   
+                > 
                 </InfoBar>) 
             : null }
 

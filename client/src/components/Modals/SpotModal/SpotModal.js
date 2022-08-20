@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react"
 import { Modal, Button } from 'react-bootstrap'
+import { toast } from "react-toastify"
 import useInput from "../../../hooks/useInput"
 import InfoBar from "../../InfoBar/InfoBar"
 import "./SpotModal.css"
@@ -37,8 +38,12 @@ const SpotModal = (props) => {
                 .then(result => result.json())
                 .then(json => {
                     console.log(json)
+                    eventHandler("close")
+                    toast.success("New place has been submitted")
                 })
-                .catch(err => console.log(err))
+                .catch(err => {
+                    toast.error("Failed to submit a new place")
+                })
                 .finally(() => setWaitingResponse(false))
             break;
 
@@ -101,7 +106,7 @@ const SpotModal = (props) => {
                 >
                     <InfoBar 
                         img={ img } 
-                        header={headerInput.value} 
+                        header={ headerInput.value } 
                         rating={{
                             votes: 0,
                             stars: new Array(5).fill(false)
@@ -110,9 +115,9 @@ const SpotModal = (props) => {
                             at: Date.now() / 1000,
                             by: props.user ? props.user.name : "UNKNOWN"
                         }} 
-                        style={{position: "static", transform: "scale(0.8)"}}
+                        body={ descInput.value }
+                        style={{ position: "static", transform: "scale(0.8)" }}
                     >
-                        { descInput.value }
                     </InfoBar>
                 </div>
             </Modal.Body>

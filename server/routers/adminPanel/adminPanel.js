@@ -19,43 +19,47 @@ module.exports = (database) => {
         })
     })
 
-    router.delete("/suggestedplaces", AdminAuth, (req, res) => {
-        const params = req.query
+    router.post("/suggestedplaces/approve", AdminAuth, async (req, res, next) => {
+        const params = req.body 
 
-        database.rejectSuggestion(params.id)
-        .then(result => {
-            res.json({
-                success: true,
-                ...result
-            })
+        const place = await database.getSuggestedPlace({ _id: params.id })
+        if (!place) {
+            next(new RouterError(400, "Place was not found"))
+            return
+        }
+
+        const newPlace = new Place({
+            ...JSON.parse(JSON.stringify(place)), 
+            rarity: params.rarity,
+        })
+
+        const savingResult = await database.acceptSuggestion(newPlace)
+        await database.deleteSuggestion(params.id)
+        res.json({
+            success: true,
+            result: savingResult
         })
     })
 
-    router.put("/suggestedplaces", AdminAuth, async (req, res) => {
-        const params = req.query
+    router.delete("/suggestedplaces/decline", AdminAuth, async (req, res, next) => {
+        const params = req.body
 
         const places = await database.getSuggestedPlaces(params.id)
         if (!places) return next(new RouterError(404, "Place was not found"))
 
         const place = places[0]
-        const id = place._id
-        delete place._id
 
-        const newPlace = new Place({
-            ...place, 
-            rarity: params.rarity,
-            rating: {
-                stars: [false, false, false, false, false],
-                avg: 0,
-                votes: 0,
-            }
+        database.deleteSuggestion(place._id)
+        .then(() => {
+            fs.unlink(process.env.IMG_PATH + place.img, (err) => {
+                if (err) next(new RouterError(400, err.message))
+                res.json({
+                    success: true
+                })
+            })
         })
-
-        const savingResult = await database.suggestPlace(newPlace)
-        const rejectionReult = await database.rejectSuggestion(id)
-        res.json({
-            success: true,
-            ...savingResult
+        .catch(err => {
+            next(new RouterError(400, err.message))
         })
     })
 
