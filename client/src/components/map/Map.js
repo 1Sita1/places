@@ -53,11 +53,14 @@ function Map({ user, setUser }){
     }, [])
 
     useEffect(() => {
+
+        // Fetching default markers
         fetch(`${ process.env.REACT_APP_HOST }/api/markers`)
         .then(result => result.json())
         .then(json => setMarkers(json))
         .catch(err => console.error(err))
 
+        // Fetching submitted markers if user is admin
         fetch(`${ process.env.REACT_APP_HOST }/api/admin/suggestedplaces`,
         { credentials: "include", })
         .then(result => result.json())
@@ -66,19 +69,23 @@ function Map({ user, setUser }){
     }, [user])
 
     const onMapClick = (event) => {
+        // Dismissing all dialogs on map click
         setSelected(null)
         setControlDialog(null)
     }
     const mapRightClick = (event) => {
+        // Setting dialog for submitting a new place
         setControlDialog({lat: event.latLng.lat(), lng: event.latLng.lng()})
     }
 
-    const controlDialogClose = () => {
-        setControlDialog(null)
+    const onZoomChanged = function() {
+        // Why the hell i need to do that with "this"????
+        setZoom(this.zoom)
     }
 
-    const onZoomChanged = function() {
-        setZoom(this.zoom)
+    const dismissSpotModal = () => {
+        setControlDialog(null)
+        setSpotModal(false)
     }
 
     const addSpot = () => {
@@ -146,7 +153,7 @@ function Map({ user, setUser }){
                 }
 
                 { controlDialog ? 
-                    <InfoWindow position={controlDialog} onCloseClick={controlDialogClose}>
+                    <InfoWindow position={controlDialog} onCloseClick={ () => setControlDialog(null) }>
                         <div style={{padding: 4}}>
                             <Button onClick={addSpot}>Add spot</Button>
                         </div>
@@ -165,6 +172,7 @@ function Map({ user, setUser }){
                     id={selected._id}
                     onCloseClick={() => setSelected(null)}
                     user={user}
+                    approvedBy={selected.approvedBy}
                 > 
                 </InfoBar>) 
             : null }
@@ -178,7 +186,7 @@ function Map({ user, setUser }){
 
             <SpotModal 
                 show={spotModal} 
-                setSpotModal={setSpotModal} 
+                setSpotModal={dismissSpotModal} 
                 position={controlDialog}
                 user={user}
             >

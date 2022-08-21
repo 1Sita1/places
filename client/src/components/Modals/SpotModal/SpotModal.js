@@ -5,6 +5,11 @@ import useInput from "../../../hooks/useInput"
 import InfoBar from "../../InfoBar/InfoBar"
 import "./SpotModal.css"
 
+/*
+
+    Modal for submitting new places
+
+*/
 
 const SpotModal = (props) => {
 
@@ -28,21 +33,17 @@ const SpotModal = (props) => {
                 formData.append("place-img", imgForUpload)
                 formData.append("body", descInput.value)
 
-                const options = {
+                fetch(`${ process.env.REACT_APP_HOST }/api/markers`, {
                     method: "POST",
                     credentials: 'include',
                     body: formData
-                }
-
-                fetch(`${ process.env.REACT_APP_HOST }/api/markers`, options)
+                })
                 .then(result => result.json())
                 .then(json => {
                     console.log(json)
                     eventHandler("close")
-                    toast.success("New place has been submitted")
-                })
-                .catch(err => {
-                    toast.error("Failed to submit a new place")
+                    if (json.success) toast.success("New place has been submitted")
+                    else toast.error("Failed to submit a new place")
                 })
                 .finally(() => setWaitingResponse(false))
             break;
@@ -62,7 +63,6 @@ const SpotModal = (props) => {
 
         }
     }
-
 
     return (
         <Modal size="lg" show={props.show} onHide={() => eventHandler("close")}>

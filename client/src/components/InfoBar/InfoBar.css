@@ -14,7 +14,8 @@
   align-items: center;
   z-index: 10;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  overflow-y: scroll; 
+  overflow-y: auto;
+  border-radius: 0.5rem; 
 }
 .infoBar::-webkit-scrollbar-track {
   background-color: #f5f5f5;
@@ -44,10 +45,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-.starsWrapper {
-  display: flex;
-  align-items: center;
 }
 .placeVotes {
   color: #5c5c5c;

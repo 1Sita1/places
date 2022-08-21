@@ -3,6 +3,7 @@ const RouterError = require('../../helpers/routerError/routerError.js')
 const Auth = require('../../middlewares/Auth/Auth.js')
 const SpamFilter = require('../../middlewares/SpamFilter/SpamFilter.js')
 const SuggestedPlace = require('../../schema/SuggestedPlace.js')
+const getStarsArrayFromNumber = require('../../helpers/starsArrayFromNumber/getStarsArrayFromNumber')
 const router = express.Router()
 const multer = require('multer')
 const path = require('path')
@@ -83,7 +84,7 @@ module.exports = (database) => {
 
         const newPlace = new SuggestedPlace({
             ...suggested,
-            img: req.file.filename,
+            img: req?.file?.filename,
             location: JSON.parse(suggested.location),
             created: {
                 by: user.name,
@@ -93,11 +94,14 @@ module.exports = (database) => {
 
         database.suggestPlace(newPlace) 
         .then(() => {
-            res.status(201).send(newPlace)
+            res.status(201).json({
+                success: true,
+                place: newPlace
+            })
         })
         .catch(err => {
             console.log(err.message) 
-            fs.unlink(process.env.IMG_PATH + req.file.filename, (err) => {
+            fs.unlink(process.env.IMG_PATH + req?.file?.filename, (err) => {
                 if (err) console.log(err)
                 else console.log("file deleted")
                 next(new RouterError(400, "Failed to add new place"))
@@ -105,50 +109,36 @@ module.exports = (database) => {
         })
     })
 
-    router.put("/markers", Auth, async (req, res, next) => {
-        const requestedUser = res.locals.user
-        const params = req.query
+    router.patch("/markers", Auth, async (req, res, next) => {
+        const requestedUser = res.locals.user 
+        const params = req.body
 
-        if (params.vote < 1 || params.vote > 5) {
+        if (!(params.vote >= 1 && params.vote <= 5)) {
             next(new RouterError(400, "Invalid vote value"))
             return
         }
 
-        const places = await database.getPlaces({_id: params.id})
-        const place = places && places[0]
+        const place = await database.getPlaceById(params.id)
         if (!place) {
-            next(new RouterError(404, "Place was not found"))
+            next(new RouterError(400, "Place was not found"))
             return
         }
 
         
         database.getUser({name: requestedUser.name})
         .then(user=> {
+            let userPrevVote = null
             for (let i = 0; i < user.votes.length; i++) {
-                const votedPlace = user.votes[i]
-                if (votedPlace._id === place._id) {
-                    const difference = votedPlace.vote - params.vote
-                    place.votes_value += difference
-                    place.avg = place.votes_value / place.votes
-                    votedPlace.value = params.vote
- 
-                    database.saveUser(user)
-                    database.savePlace(place)
- 
-                    res.json({
-                        success: true,
-                        isFirstTime: false,
-                        place: place
-                    })
-                } 
+                if (user.votes[i].id.equals(place._id)) userPrevVote = i
             }
 
-            if (!res.headersSent) {
-                place.votes++
-                place.votes_value += params.vote
-                place.avg = place.votes_value / place.votes
+            if (userPrevVote === null) {
+                place.rating.votes++
+                place.rating.votes_value += params.vote
+                place.rating.avg = place.rating.votes_value / place.rating.votes
+                place.rating.stars = getStarsArrayFromNumber(place.rating.avg)
                 user.votes.push({
-                    ïd: place._id,
+                    id: place._id, 
                     vote: params.vote,
                 })
 
@@ -158,7 +148,26 @@ module.exports = (database) => {
                 res.json({
                     success: true,
                     isFirstTime: true,
-                    place: place
+                    newRating: place.rating
+                })
+            }
+
+            else {
+                const difference = user.votes[userPrevVote].vote - params.vote
+                place.rating.votes_value -= difference
+                place.rating.avg = place.rating.votes_value / place.rating.votes
+                place.rating.stars = getStarsArrayFromNumber(place.rating.avg)
+                user.votes[userPrevVote].vote = params.vote
+                user.markModified("votes")
+
+                database.saveUser(user)
+                .then(res => console.log(res))
+                database.savePlace(place)
+
+                res.json({
+                    success: true,
+                    isFirstTime: false,
+                    newRating: place.rating
                 })
             }
         })

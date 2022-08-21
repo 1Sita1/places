@@ -1,0 +1,7 @@
+.starsWrapper {
+    display: flex;
+    align-items: center;
+}
+.starsWrapper > img {
+    cursor: pointer;
+}

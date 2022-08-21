@@ -10,16 +10,6 @@ import 'react-toastify/dist/ReactToastify.css';
 function App() {
   const [user, setUser] = useState(null)
 
-  toast.info('🦄 Wow so easy!', {
-    position: "bottom-right",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-  });
-
   useEffect(() => {
     fetch(`${ process.env.REACT_APP_HOST }/api/user`, {
       credentials: "include"

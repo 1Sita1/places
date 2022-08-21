@@ -3,6 +3,7 @@ const router = express.Router()
 const RouterError = require("../../helpers/routerError/routerError")
 const AdminAuth = require("../../middlewares/AdminAuth/AdminAuth")
 const Place = require('../../schema/Place')
+const fs = require("fs")
 
 
 module.exports = (database) => {
@@ -20,6 +21,7 @@ module.exports = (database) => {
     })
 
     router.post("/suggestedplaces/approve", AdminAuth, async (req, res, next) => {
+        const admin = res.locals.user
         const params = req.body 
 
         const place = await database.getSuggestedPlace({ _id: params.id })
@@ -31,6 +33,7 @@ module.exports = (database) => {
         const newPlace = new Place({
             ...JSON.parse(JSON.stringify(place)), 
             rarity: params.rarity,
+            approvedBy: admin.name
         })
 
         const savingResult = await database.acceptSuggestion(newPlace)
@@ -44,10 +47,12 @@ module.exports = (database) => {
     router.delete("/suggestedplaces/decline", AdminAuth, async (req, res, next) => {
         const params = req.body
 
-        const places = await database.getSuggestedPlaces(params.id)
-        if (!places) return next(new RouterError(404, "Place was not found"))
-
-        const place = places[0]
+        const place = await database.getSuggestedPlace({ _id: params.id })
+        if (!place) {
+            console.log(place)
+            next(new RouterError(404, "Place was not found"))
+            return
+        }
 
         database.deleteSuggestion(place._id)
         .then(() => {

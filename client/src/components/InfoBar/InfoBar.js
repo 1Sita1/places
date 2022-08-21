@@ -3,24 +3,21 @@ import { Button } from 'react-bootstrap';
 import {  useState } from 'react';
 import "./InfoBar.css";
 import { toast } from 'react-toastify';
-
-function unixToDate(unix) {
-    const date = new Date(unix * 1000).toLocaleDateString("fi")
-    return  date
-}
+import unixToDate from '../../helpers/unixToDate'
+import Rating from '../Rating/Rating';
 
 
 function InfoBar({ style, onCloseClick, user, ...data }) {
 
-    const [a, b] = useState("c")
     const [_rarity, _setRarity] = useState(null)
+    const [rating, setRating] = useState(data.rating)
 
     const sendDecision = (action) => {
-        if (!_rarity) {
+        if (!_rarity && action === "approve") {
             toast.error("Pick marker rarity")
             return
         }
-        console.log(data)
+
         fetch(`${ process.env.REACT_APP_HOST }/api/admin/suggestedplaces/${ action }`, {
             method: action === "approve" ? "POST" : "DELETE",
             credentials: "include",
@@ -41,6 +38,30 @@ function InfoBar({ style, onCloseClick, user, ...data }) {
         })
         .catch(err => toast.error(err.message))
     }
+    
+    const sendUserReview = (rate) => {
+        if (!user) {
+            toast.error("Please, log in before sending your review")
+            return
+        }
+        console.log(data)
+        fetch(`${ process.env.REACT_APP_HOST }/api/markers`, {
+            method: "PATCH",
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: data.id,
+                vote: rate
+            })
+        })
+        .then(data => data.json())
+        .then(json => {
+            console.log(json)
+            setRating(json.newRating)
+        })
+    } 
 
     return (
         <div className='infoBar' style={ style }>
@@ -49,21 +70,15 @@ function InfoBar({ style, onCloseClick, user, ...data }) {
             </div>
             <div className='ratingWrapper'>
                 <span className='placeVotes'>
-                    { data.rating ? data.rating.votes : 0 } votes
+                    { rating ? rating.votes : 0 } votes
                 </span>
-                <div className='starsWrapper'>
-                    { 
-                        data?.rating && data.rating.stars.map((star, id) => {
-                            return <img src={ star ? 'star.png' : 'starTemplate.png' } key={id}></img>
-                        }) 
-                    }
-                </div>
+                <Rating stars={ rating.stars } onRate={ sendUserReview }></Rating>
             </div>
             <div className='infoBarInfo'>
                 <div className='topPart'>
                     <h2 className='infoBarHeader'>{ data?.header }</h2>
                     <p className='infoBarBody' style={{whiteSpace: "pre-line"}}>
-                        { data?.children ?? "Lorem ipsum..." }
+                        { data.body }
                     </p>
                 </div>
                 <div className='bottomPart pb-3'>
@@ -75,8 +90,9 @@ function InfoBar({ style, onCloseClick, user, ...data }) {
                         { unixToDate(data.created.at) }
                     </small>
                 </div>
+                
                 { 
-                    user && user.isAdmin ? (
+                    user && user.isAdmin && data.approvedBy == null ? (
                         <>
                             <div className='d-flex justify-content-around'>
                                 <span className={ _rarity == "bronze" ? "infoBar-rarityIcon infoBar-rarityIcon-selected" : "infoBar-rarityIcon" } onClick={ () => _setRarity("bronze") }> 
@@ -91,7 +107,7 @@ function InfoBar({ style, onCloseClick, user, ...data }) {
                             </div>
                             <div className='d-flex justify-content-between p-5'>
                                 <Button variant='success' onClick={ () => sendDecision("approve") }>Approve</Button>
-                                <Button variant='danger' onClick={ () => sendDecision("approve") }>Decline</Button>
+                                <Button variant='danger' onClick={ () => sendDecision("decline") }>Decline</Button>
                             </div>
                         </>
                     ) : null

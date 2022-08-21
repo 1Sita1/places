@@ -54,6 +54,10 @@ const Place = new mongoose.Schema({
             type: Number,
             default: Date.now() / 1000,
         }
+    },
+    approvedBy: {
+        type: String,
+        required: true
     }
 })
 

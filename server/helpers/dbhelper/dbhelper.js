@@ -22,13 +22,18 @@ module.exports = {
         return result
     },
 
-    saveUser: async (place) => {
-        const result = await place.save()
+    getUserById: async (id) => {
+        const result = await userSchema.findById(id)
         return result
     },
 
-    savePlace: async (user) => {
+    saveUser: async (user) => {
         const result = await user.save()
+        return result
+    },
+
+    savePlace: async (place) => {
+        const result = await place.save()
         return result
     },
 
@@ -42,8 +47,8 @@ module.exports = {
         return result
     },
 
-    getPlace: async (filer) => {
-        const result = await PlaceSchema.findOne(filer)
+    getPlaceById: async (id) => {
+        const result = await PlaceSchema.findById(id)
         return result
     },
 
