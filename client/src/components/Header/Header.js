@@ -1,6 +1,7 @@
 import { React, useState, useEffect, useRef } from 'react'
 import { Button } from 'react-bootstrap'
 import AuthModal from '../Modals/AuthModal/AuthModal'
+import './Header.css'
 
 function Header({user, setUser}) {
 
@@ -18,7 +19,7 @@ function Header({user, setUser}) {
         <>
             <div className='navbar navbar-expand-lg fixed-top navbar-dark bg-dark bg-transparent text-white px-4' id='modal'>
                 <div className='container-fluid d-flex align-items-center justify-content-between'>
-                    <span className='navbar-brand h2' style={{cursor: "default"}}>MP</span>
+                    <span className='navbar-brand h2' style={{cursor: "default"}}>I-Places</span>
                     <span>
 
                         { 

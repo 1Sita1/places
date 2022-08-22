@@ -1,15 +1,24 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { 
+    useCallback, 
+    useEffect, 
+    useRef, 
+    useState, 
+    useContext 
+} from "react"
+
 import {
     GoogleMap,
     useLoadScript,
     Marker,
     InfoWindow,
 } from "@react-google-maps/api"
-import mapStyles from "./MapStyles";
+
+import * as mapStyles from "./MapStyles";
 import "./Map.css"
 import InfoBar from "../InfoBar/InfoBar";
 import SpotModal from "../Modals/SpotModal/SpotModal";
 import AuthModal from "../Modals/AuthModal/AuthModal";
+import ThemeContext from "../../contexts/ThemeContext";
 import { Button } from "react-bootstrap";
 
 const libraries = [
@@ -24,8 +33,8 @@ const center = {
     lat: 54.56,
     lng: 21.19
 }
-const options = {
-    styles: mapStyles,
+const defaultMapOptions = {
+    styles: null,
     disableDefaultUI: true,
     streetViewControl: true, 
 }
@@ -35,7 +44,7 @@ const defaultZoom = 4
 function Map({ user, setUser }){
 
     const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: "AIzaSyAw6mcd0lwML_h3PPeH0n_nt6bu_TNnfSE",
+        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API,
         libraries: libraries
     })
 
@@ -46,10 +55,21 @@ function Map({ user, setUser }){
     const [authModal, setAuthModal] = useState(false)
     const [spotModal, setSpotModal] = useState(false)
     const [zoom, setZoom] = useState(defaultZoom)
+    const [mapOptions, setMapOptions] = useState(defaultMapOptions)
+    const theme = useContext(ThemeContext)
 
     const mapRef = useRef()
     const onMapLoad = useCallback(map => {
         mapRef.current = map
+    }, [])
+
+    useEffect(() => {
+        setMapOptions(oldMapOptions => {
+            return {
+                ...oldMapOptions,
+                styles: mapStyles[theme.name]
+            }
+        })
     }, [])
 
     useEffect(() => {
@@ -107,7 +127,7 @@ function Map({ user, setUser }){
                 mapContainerStyle={mapContainerStyle} 
                 zoom={defaultZoom}
                 center={center}
-                options={options}
+                options={mapOptions}
                 onClick={onMapClick}
                 onRightClick={mapRightClick}
                 onZoomChanged={onZoomChanged}

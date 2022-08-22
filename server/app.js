@@ -29,12 +29,12 @@ module.exports = (database) => {
     app.use(express.static('public'))
     
     // Routers
-    const user = require("./routers/user/user.js")(database)
-    const register = require("./routers/register/register.js")(database)
-    const login = require("./routers/login/login.js")(database)
-    const logout = require("./routers/logout/logout")(database)
-    const markers = require("./routers/markers/markers.js")(database)
-    const adminPanel = require("./routers/adminPanel/adminPanel.js")(database)
+    const user = require("./routes/user/user.js")(database)
+    const register = require("./routes/register/register.js")(database)
+    const login = require("./routes/login/login.js")(database)
+    const logout = require("./routes/logout/logout")(database)
+    const markers = require("./routes/markers/markers.js")(database)
+    const adminPanel = require("./routes/adminPanel/adminPanel.js")(database)
     
     app.use("/api/", user)
     app.use("/api/", register)
