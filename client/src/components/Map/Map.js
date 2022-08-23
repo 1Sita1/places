@@ -11,9 +11,9 @@ import {
     useLoadScript,
     Marker,
     InfoWindow,
+    StreetViewPanorama
 } from "@react-google-maps/api"
 
-import * as mapStyles from "./MapStyles";
 import "./Map.css"
 import InfoBar from "../InfoBar/InfoBar";
 import SpotModal from "../Modals/SpotModal/SpotModal";
@@ -36,12 +36,13 @@ const center = {
 const defaultMapOptions = {
     styles: null,
     disableDefaultUI: true,
-    streetViewControl: true, 
+    streetViewControl: true,
+    mapTypeControl: true,
 }
 const defaultZoom = 4
 
 
-function Map({ user, setUser }){
+function Map({ user, setUser, setInPanorama }){
 
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API,
@@ -56,7 +57,10 @@ function Map({ user, setUser }){
     const [spotModal, setSpotModal] = useState(false)
     const [zoom, setZoom] = useState(defaultZoom)
     const [mapOptions, setMapOptions] = useState(defaultMapOptions)
+
     const theme = useContext(ThemeContext)
+
+    const inPanorama = useRef(false)
 
     const mapRef = useRef()
     const onMapLoad = useCallback(map => {
@@ -67,10 +71,10 @@ function Map({ user, setUser }){
         setMapOptions(oldMapOptions => {
             return {
                 ...oldMapOptions,
-                styles: mapStyles[theme.name]
+                styles: theme.current.mapStyles
             }
         })
-    }, [])
+    }, [theme])
 
     useEffect(() => {
 
@@ -114,7 +118,6 @@ function Map({ user, setUser }){
             setAuthModal(true)
         }
     } 
-
 
 
     if (loadError) return "Error loading maps"
@@ -179,6 +182,13 @@ function Map({ user, setUser }){
                         </div>
                     </InfoWindow> 
                 : null }
+
+                <StreetViewPanorama
+                    onVisibleChanged={ () => {
+                        inPanorama.current = !inPanorama.current
+                        setInPanorama(inPanorama.current) 
+                    } }
+                />
 
             </GoogleMap>
 

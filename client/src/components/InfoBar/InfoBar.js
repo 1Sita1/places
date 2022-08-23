@@ -60,6 +60,7 @@ function InfoBar({ style, onCloseClick, user, ...data }) {
         .then(json => {
             console.log(json)
             setRating(json.newRating)
+            toast.success("Your review has been successfully sent!")
         })
     } 
 

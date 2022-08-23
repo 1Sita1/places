@@ -4,13 +4,14 @@ import Header from './components/Header/Header';
 import Map from './components/Map/Map';
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import ThemeContext from './contexts/ThemeContext';
-import themes from './themes/themes';
+import ThemeContext, { themes } from './contexts/ThemeContext';
 import 'react-toastify/dist/ReactToastify.css';
 
 
 function App() {
     const [user, setUser] = useState(null)
+    const [theme, setTheme] = useState(themes.dark)
+    const [inPanorama, setInPanorama] = useState(false)
 
     useEffect(() => {
         fetch(`${ process.env.REACT_APP_HOST }/api/user`, {
@@ -20,23 +21,17 @@ function App() {
         .then(json => {
             setUser(json.user)
         })
+        .catch()
     }, [])
 
     return (
-        <ThemeContext.Provider value={ themes.dark }>
+        <ThemeContext.Provider value={{ current: theme, setTheme }}>
             <div className="App">
-                <Header user={user} setUser={setUser} />
-                <Map user={user} setUser={setUser} />
+                { !inPanorama && <Header user={user} setUser={setUser} /> }
+                <Map user={user} setUser={ setUser } setInPanorama={ setInPanorama } />
                 <ToastContainer
                     position="bottom-right"
-                    autoClose={5000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
+                    theme={ theme.name }
                 />
             </div>
         </ThemeContext.Provider>
