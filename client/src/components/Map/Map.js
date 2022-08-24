@@ -123,6 +123,7 @@ function Map({ user, setUser, setInPanorama }){
     if (loadError) return "Error loading maps"
     if (!isLoaded) return "Loading maps"
 
+
     return (
         <>
         

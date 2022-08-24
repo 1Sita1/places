@@ -21,7 +21,7 @@ function App() {
         .then(json => {
             setUser(json.user)
         })
-        .catch()
+        .catch(e => {})
     }, [])
 
     return (

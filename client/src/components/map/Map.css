@@ -1,1 +1,4 @@
-
+.gm-style-mtc {
+    top: calc(100vh - 74px);
+    left: calc(100vw - 250px);
+}
