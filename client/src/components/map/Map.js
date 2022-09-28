@@ -38,6 +38,7 @@ const defaultMapOptions = {
     disableDefaultUI: true,
     streetViewControl: true,
     mapTypeControl: true,
+    gestureHandling: "greedy"
 }
 const defaultZoom = 4
 

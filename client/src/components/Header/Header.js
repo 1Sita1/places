@@ -25,7 +25,7 @@ function Header({user, setUser}) {
                 id='modal'
             >
                 <div className='container-fluid d-flex align-items-center justify-content-between'>
-                    <span className={ "navbar-brand h2 text-" + theme.current.background } style={{cursor: "default"}}>I-Places</span>
+                    <span className={ "navbar-brand h2 text-" + theme.current.background } style={{cursor: "default"}}>PlacesShare</span>
                     <span className='d-flex align-items-center'>
                         <span className='d-flex align-items-center' style={{ marginRight: "30px" }}>
                             <Toggle

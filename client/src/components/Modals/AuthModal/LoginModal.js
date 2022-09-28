@@ -1,5 +1,6 @@
 import { React, useState, useRef } from "react"
 import { Modal, Button } from 'react-bootstrap'
+import { toast } from "react-toastify"
 import useInput from "../../../hooks/useInput"
 
 const LoginModal = ({ show, handleClose, switchMode, setUser }) => {
@@ -43,6 +44,7 @@ const LoginModal = ({ show, handleClose, switchMode, setUser }) => {
             }
             else {
                 console.log("failed")
+                toast.error("Login (email) or password is incorrect")
             }
         })
         .finally(() => setWaitingResponse(false))
