@@ -5,10 +5,15 @@ const RouterErrorHandler = require("./helpers/routerError/routerErrorHandler")
 const dotenv = require('dotenv')
 dotenv.config()
 
-const whitelist = process.env.NODE_ENV == "test" ? ['http://localhost:3000', 'http://localhost:5000', undefined, "chrome-extension://gmmkjpcadciiokjpikmkkmapphbmdjok"] : null
-console.log(process.env.NODE_ENV )
+const whitelist = process.env.NODE_ENV == "test" ? ['http://localhost:3000', 'http://localhost:5000', undefined, "chrome-extension://gmmkjpcadciiokjpikmkkmapphbmdjok"] 
+: [undefined, "https://placesshare.com"]
+
+console.log(process.env.NODE_ENV)
+console.log(whitelist)
+
 const corsOptions = { 
     origin: (origin, callback) => { 
+        console.log(origin)
         if (whitelist.includes(origin)) callback(null, true)
         else callback(new Error('Not allowed by CORS'))
     },
