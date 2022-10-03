@@ -83,6 +83,10 @@ function InfoBar({ style, onCloseClick, user, ...data }) {
                     </p>
                 </div>
                 <div className='bottomPart pb-3'>
+                    <a href={ data.source } target="_blank" className='article-source'>
+                        { data.source }
+                    </a>
+                    <br></br>
                     <small className="text-muted">
                         Created by { data?.created.by }
                     </small>

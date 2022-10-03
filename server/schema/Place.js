@@ -45,6 +45,10 @@ const Place = new mongoose.Schema({
         type: String,
         required: true
     },
+    source: {
+        type: String,
+        required: true
+    },
     created: {
         by: {
             type: String,

@@ -17,6 +17,7 @@ const SpotModal = (props) => {
     const [img, setImg] = useState("yes.gif")
     const [imgForUpload, setImgForUpload] = useState(null)
     const headerInput = useInput("Example header")
+    const sourceInput = useInput("https://www.wikipedia.org/")
     const descInput = useInput("Wasaaaap wasassaaaaaap")
 
     const filesRef = useRef(null)
@@ -100,6 +101,16 @@ const SpotModal = (props) => {
                     required>
                 </textarea>
 
+                <label className="col-form-label">Add source</label>
+                <input 
+                    ref={sourceInput.ref} 
+                    className="form-control"
+                    onChange={(e) => sourceInput.onChange(e)} 
+                    onKeyPress={() => null} 
+                    placeholder={sourceInput.value}
+                    required>
+                </input>
+
                 <div 
                     className="py-2 mt-4" 
                     style={{display: "flex", justifyContent: "center", backgroundColor: "var(--bs-gray-800)"}}
@@ -116,6 +127,7 @@ const SpotModal = (props) => {
                             by: props.user ? props.user.name : "UNKNOWN"
                         }} 
                         body={ descInput.value }
+                        source={ sourceInput.value }
                         style={{ position: "static", transform: "scale(0.8)" }}
                     >
                     </InfoBar>

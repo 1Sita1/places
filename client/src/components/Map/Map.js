@@ -50,7 +50,7 @@ function Map({ user, setUser, setInPanorama }){
         libraries: libraries
     })
 
-    const [markers, setMarkers] = useState([])
+    const [markers, setMarkers] = useState([{"location":{"lat":60.17003890952073,"lng":24.95242997186339},"rating":{"stars":[true,true,true,true,false],"avg":4,"votes":1,"votes_value":4},"created":{"by":"sita","at":1664399636},"_id":"6334b91410d102208109158b","img":"place-img-1664399636857-688432249.jpg","rarity":"silver","header":"Darude - Sandstorm clip","body":"Music video for \"Sandstorm\" was released in 2000. \r\n\r\nThe video was directed by Juuso Syrjä, a.k.a. Uzi, and was shot in various places in Helsinki, including the Helsinki Cathedral and the Senate Square. It became the first Finnish music video shown on MTV in the US and it received several awards in Finland and on MTV.\r\n\r\nhttps://en.wikipedia.org/wiki/Sandstorm_(instrumental)","approvedBy":"sita","__v":1}])
     const [suggestedMarkers, setSuggestedMarkers] = useState([])
     const [selected, setSelected] = useState(null)
     const [controlDialog, setControlDialog] = useState(null)
@@ -180,6 +180,8 @@ function Map({ user, setUser, setInPanorama }){
                 { controlDialog ? 
                     <InfoWindow position={controlDialog} onCloseClick={ () => setControlDialog(null) }>
                         <div style={{padding: 4}}>
+                            <h6>{ ~~(controlDialog.lat * 10000) / 10000 + " N" }</h6>
+                            <h6>{ ~~(controlDialog.lng * 10000) / 10000 + " W" }</h6>
                             <Button onClick={addSpot}>Add spot</Button>
                         </div>
                     </InfoWindow> 
